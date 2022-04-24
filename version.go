@@ -3,4 +3,4 @@
 
 package main
 
-func main() {}
+const Version = "0.0.0.dev"
