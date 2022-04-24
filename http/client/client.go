@@ -26,6 +26,7 @@ func Get(url string) (*http.Response, error) {
 
 // Add default headers for the peach http client.
 func buildHeaders(req *http.Request) *http.Request {
-	req.Header.Set("User-Agent", "peach/"+version.Version+" ricketyspace.net/contact")
+	req.Header.Set("User-Agent", "peach/"+version.Version+
+		" ricketyspace.net/contact")
 	return req
 }
