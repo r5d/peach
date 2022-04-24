@@ -19,9 +19,7 @@ func Get(url string) (*http.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	req = buildHeaders(req)
-
-	return client.Do(req)
+	return client.Do(buildHeaders(req))
 }
 
 // Add default headers for the peach http client.
