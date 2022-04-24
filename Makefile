@@ -9,3 +9,6 @@ peach: fmt
 fmt:
 	go fmt ${MOD} ${MOD}/http/client
 
+test:
+	go test -v ${MOD}/http/client
+.PHONY: test
