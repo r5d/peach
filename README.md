@@ -1,1 +1,1 @@
-peach's a weather site.
+A weather site.
