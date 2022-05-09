@@ -7,8 +7,8 @@ peach: fmt
 	go build
 
 fmt:
-	go fmt ${MOD} ${MOD}/http/client
+	go fmt ${MOD} ${MOD}/client ${MOD}/nws
 
 test:
-	go test -v ${MOD}/http/client
+	go test ${MOD}/client ${MOD}/nws ${ARGS}
 .PHONY: test
