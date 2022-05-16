@@ -24,14 +24,14 @@ type NWSPoint struct {
 	Properties NWSPointProperties
 }
 
-type NWSPointError struct {
+type NWSError struct {
 	Title  string
 	Type   string
 	Status int
 	Detail string
 }
 
-func (e NWSPointError) Error() string {
+func (e NWSError) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
@@ -51,7 +51,7 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 
 	// Check if the request failed.
 	if resp.StatusCode != 200 {
-		perr := new(NWSPointError)
+		perr := new(NWSError)
 		err := json.Unmarshal(body, perr)
 		if err != nil {
 			return nil, fmt.Errorf("points: json: %v", err)
