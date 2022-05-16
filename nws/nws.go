@@ -20,23 +20,23 @@ type NWSPointProperties struct {
 	ForecastHourlyLink string `json:"forecastHourly"`
 }
 
-type NWSPoints struct {
+type NWSPoint struct {
 	Properties NWSPointProperties
 }
 
-type NWSPointsError struct {
+type NWSPointError struct {
 	Title  string
 	Type   string
 	Status int
 	Detail string
 }
 
-func (e NWSPointsError) Error() string {
+func (e NWSPointError) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
 // NWS `/points` endpoint.
-func Points(lat, lng float32) (*NWSPoints, error) {
+func Points(lat, lng float32) (*NWSPoint, error) {
 	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
 	resp, err := client.Get(url)
 	if err != nil {
@@ -51,7 +51,7 @@ func Points(lat, lng float32) (*NWSPoints, error) {
 
 	// Check if the request failed.
 	if resp.StatusCode != 200 {
-		perr := new(NWSPointsError)
+		perr := new(NWSPointError)
 		err := json.Unmarshal(body, perr)
 		if err != nil {
 			return nil, fmt.Errorf("points: json: %v", err)
@@ -60,16 +60,17 @@ func Points(lat, lng float32) (*NWSPoints, error) {
 	}
 
 	// Unmarshal.
-	points := new(NWSPoints)
-	err = json.Unmarshal(body, points)
+	point := new(NWSPoint)
+	err = json.Unmarshal(body, point)
 	if err != nil {
-		return nil, fmt.Errorf("getting points: json decode: %v", err)
+		return nil, fmt.Errorf("points: json decode: %v", err)
 	}
-	if points.Properties.ForecastLink == "" {
+	if point.Properties.ForecastLink == "" {
 		return nil, fmt.Errorf("points: json: %v", err)
 	}
-	if points.Properties.ForecastHourlyLink == "" {
+	if point.Properties.ForecastHourlyLink == "" {
 		return nil, fmt.Errorf("points: json: %v", err)
 	}
-	return points, nil
+	return point, nil
 }
+
