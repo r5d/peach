@@ -13,11 +13,11 @@ import (
 )
 
 type NWSPointProperties struct {
-	GridId             string
-	GridX              int
-	GridY              int
-	ForecastLink       string `json:"forecast"`
-	ForecastHourlyLink string `json:"forecastHourly"`
+	GridId         string
+	GridX          int
+	GridY          int
+	Forecast       string
+	ForecastHourly string
 }
 
 type NWSPoint struct {
@@ -65,11 +65,11 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 	if err != nil {
 		return nil, fmt.Errorf("points: json decode: %v", err)
 	}
-	if point.Properties.ForecastLink == "" {
-		return nil, fmt.Errorf("points: json: %v", err)
+	if point.Properties.Forecast == "" {
+		return nil, fmt.Errorf("points: json: forecast empty")
 	}
-	if point.Properties.ForecastHourlyLink == "" {
-		return nil, fmt.Errorf("points: json: %v", err)
+	if point.Properties.ForecastHourly == "" {
+		return nil, fmt.Errorf("points: json: forecasthourly empty")
 	}
 	return point, nil
 }
