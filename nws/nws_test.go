@@ -33,3 +33,55 @@ func TestPoints(t *testing.T) {
 		t.Errorf("points: %v", np)
 	}
 }
+
+func TestForecast(t *testing.T) {
+	// Get point.
+	np, err := Points(41.115, -83.177)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
+
+	// Get forecast.
+	fc, err := Forecast(np)
+	if err != nil {
+		t.Errorf("error: %v", err)
+	}
+
+	// Verify periods.
+	for i, period := range fc.Properties.Periods {
+		if period.Number < 1 {
+			t.Errorf("period: %d: number invalid: %v", i, period.Number)
+		}
+		if len(period.Name) < 1 {
+			t.Errorf("period: %d: name invalid: %v", i, period.Name)
+		}
+		if len(period.StartTime) < 1 {
+			t.Errorf("period: %d: start time invalid: %v", i,
+				period.StartTime)
+		}
+		if len(period.EndTime) < 1 {
+			t.Errorf("period: %d: end time invalid: %v", i,
+				period.EndTime)
+		}
+		if len(period.TemperatureUnit) < 1 {
+			t.Errorf("period: %d: temperature unit invalid: %v",
+				i, period.TemperatureUnit)
+		}
+		if len(period.WindSpeed) < 1 {
+			t.Errorf("period: %d: wind speed invalid: %v",
+				i, period.WindSpeed)
+		}
+		if len(period.WindDirection) < 1 {
+			t.Errorf("period: %d: wind direction invalid: %v",
+				i, period.WindDirection)
+		}
+		if len(period.ShortForecast) < 1 {
+			t.Errorf("period: %d: short forecast invalid: %v",
+				i, period.ShortForecast)
+		}
+		if len(period.DetailedForecast) < 1 {
+			t.Errorf("period: %d: detailed forecast invalid: %v",
+				i, period.DetailedForecast)
+		}
+	}
+}
