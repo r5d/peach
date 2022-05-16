@@ -46,7 +46,7 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 	// Parse response body.
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("getting points: body: %v", err)
+		return nil, fmt.Errorf("points: body: %v", err)
 	}
 
 	// Check if the request failed.
@@ -63,13 +63,13 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 	point := new(NWSPoint)
 	err = json.Unmarshal(body, point)
 	if err != nil {
-		return nil, fmt.Errorf("points: json decode: %v", err)
+		return nil, fmt.Errorf("points: decode: %v", err)
 	}
 	if point.Properties.Forecast == "" {
-		return nil, fmt.Errorf("points: json: forecast empty")
+		return nil, fmt.Errorf("points: forecast empty")
 	}
 	if point.Properties.ForecastHourly == "" {
-		return nil, fmt.Errorf("points: json: forecasthourly empty")
+		return nil, fmt.Errorf("points: forecasthourly empty")
 	}
 	return point, nil
 }
