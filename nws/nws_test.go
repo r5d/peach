@@ -7,7 +7,7 @@ import "testing"
 
 func TestPoints(t *testing.T) {
 	// Test valid lat,lng.
-	np, err := points(41.115, -83.177)
+	np, err := Points(41.115, -83.177)
 	if err != nil {
 		t.Errorf("points: %v", err)
 	}
@@ -19,7 +19,7 @@ func TestPoints(t *testing.T) {
 	}
 
 	// Test invalid lat,lng
-	np, err = points(115.0, -83.177)
+	np, err = Points(115.0, -83.177)
 	if err == nil {
 		t.Errorf("points: %v", np)
 	}

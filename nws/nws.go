@@ -32,8 +32,8 @@ func (e NWSPointsError) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
-// NWS API's `/points` endpoint.
-func points(lat, lng float32) (*NWSPoints, error) {
+// NWS `/points` endpoint.
+func Points(lat, lng float32) (*NWSPoints, error) {
 	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
 	resp, err := client.Get(url)
 	if err != nil {
