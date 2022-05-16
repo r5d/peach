@@ -17,6 +17,12 @@ func TestPoints(t *testing.T) {
 	if np.Properties.ForecastHourlyLink != "https://api.weather.gov/gridpoints/CLE/33,42/forecast/hourly" {
 		t.Errorf("points: forcecast link: '%v'", np.Properties.ForecastHourlyLink)
 	}
+	if np.Properties.GridX != 33 {
+		t.Errorf("points: gridx: %v", np.Properties.GridX)
+	}
+	if np.Properties.GridY != 42 {
+		t.Errorf("points: gridy: %v", np.Properties.GridY)
+	}
 
 	// Test invalid lat,lng
 	np, err = Points(115.0, -83.177)
