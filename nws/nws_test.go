@@ -17,6 +17,9 @@ func TestPoints(t *testing.T) {
 	if np.Properties.ForecastHourlyLink != "https://api.weather.gov/gridpoints/CLE/33,42/forecast/hourly" {
 		t.Errorf("points: forcecast link: '%v'", np.Properties.ForecastHourlyLink)
 	}
+	if np.Properties.GridId != "CLE" {
+		t.Errorf("points: gridid: %v", np.Properties.GridId)
+	}
 	if np.Properties.GridX != 33 {
 		t.Errorf("points: gridx: %v", np.Properties.GridX)
 	}

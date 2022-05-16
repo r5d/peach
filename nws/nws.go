@@ -13,6 +13,7 @@ import (
 )
 
 type NWSPointProperties struct {
+	GridId             string
 	GridX              int
 	GridY              int
 	ForecastLink       string `json:"forecast"`
