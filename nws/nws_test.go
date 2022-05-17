@@ -10,6 +10,7 @@ func TestPoints(t *testing.T) {
 	np, err := Points(41.115, -83.177)
 	if err != nil {
 		t.Errorf("points: %v", err)
+		return
 	}
 	if np.Properties.Forecast != "https://api.weather.gov/gridpoints/CLE/33,42/forecast" {
 		t.Errorf("points: forcecast link: '%v'", np.Properties.Forecast)
