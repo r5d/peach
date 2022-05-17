@@ -139,3 +139,46 @@ func Forecast(point *NWSPoint) (*NWSForecast, error) {
 	}
 	return forecast, nil
 }
+
+// NWS forecast hourly endpoint.
+func ForecastHourly(point *NWSPoint) (*NWSForecast, error) {
+	if point == nil {
+		return nil, fmt.Errorf("forecast hourly: point nil")
+	}
+	if len(point.Properties.ForecastHourly) == 0 {
+		return nil, fmt.Errorf("forecast hourly: link empty")
+	}
+
+	// Get the forecast
+	resp, err := client.Get(point.Properties.ForecastHourly)
+	if err != nil {
+		return nil, fmt.Errorf("forecast hourly: get: %v", err)
+	}
+
+	// Parse response body.
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("forecast hourly: body: %v", err)
+	}
+
+	// Check if the request failed.
+	if resp.StatusCode != 200 {
+		perr := new(NWSError)
+		err := json.Unmarshal(body, perr)
+		if err != nil {
+			return nil, fmt.Errorf("forecast hourly: json: %v", err)
+		}
+		return nil, fmt.Errorf("forecast: %v", perr)
+	}
+
+	// Unmarshal.
+	forecast := new(NWSForecast)
+	err = json.Unmarshal(body, forecast)
+	if err != nil {
+		return nil, fmt.Errorf("forecast hourly: decode: %v", err)
+	}
+	if len(forecast.Properties.Periods) == 0 {
+		return nil, fmt.Errorf("forecast hourly: periods empty")
+	}
+	return forecast, nil
+}
