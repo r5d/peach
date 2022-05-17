@@ -39,12 +39,14 @@ func TestForecast(t *testing.T) {
 	np, err := Points(41.115, -83.177)
 	if err != nil {
 		t.Errorf("error: %v", err)
+		return
 	}
 
 	// Get forecast.
 	fc, err := Forecast(np)
 	if err != nil {
 		t.Errorf("error: %v", err)
+		return
 	}
 
 	// Verify periods.
