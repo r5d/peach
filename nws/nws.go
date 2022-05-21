@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: ISC
 
 // Functions for accessing the National Weather Service API.
+// TODO: remove NWS prefix from all types.
 package nws
 
 import (
@@ -69,6 +70,8 @@ func (e NWSError) Error() string {
 }
 
 // NWS `/points` endpoint.
+//
+// TODO: return NWSError instead of error
 func Points(lat, lng float32) (*NWSPoint, error) {
 	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
 	resp, err := client.Get(url)
@@ -108,6 +111,8 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 }
 
 // NWS forecast endpoint.
+//
+// TODO: return NWSError instead of error.
 func Forecast(point *NWSPoint) (*NWSForecast, error) {
 	if point == nil {
 		return nil, fmt.Errorf("forecast: point nil")
@@ -151,6 +156,8 @@ func Forecast(point *NWSPoint) (*NWSForecast, error) {
 }
 
 // NWS forecast hourly endpoint.
+//
+// TODO: return NWSError instead of error
 func ForecastHourly(point *NWSPoint) (*NWSForecast, error) {
 	if point == nil {
 		return nil, fmt.Errorf("forecast hourly: point nil")
