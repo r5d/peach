@@ -28,6 +28,13 @@ func TestPoints(t *testing.T) {
 		t.Errorf("points: gridy: %v", np.Properties.GridY)
 	}
 
+	if np.Properties.RelativeLocation.Properties.City != "Tiffin" {
+		t.Errorf("points: location: city: %v", np.Properties)
+	}
+	if np.Properties.RelativeLocation.Properties.State != "OH" {
+		t.Errorf("points: location: state: %v", np.Properties)
+	}
+
 	// Test invalid lat,lng
 	np, err = Points(115.0, -83.177)
 	if err == nil {

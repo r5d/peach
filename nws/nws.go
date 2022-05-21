@@ -12,12 +12,22 @@ import (
 	"ricketyspace.net/peach/client"
 )
 
+type PointLocationProperties struct {
+	City  string
+	State string
+}
+
+type PointLocation struct {
+	Properties PointLocationProperties
+}
+
 type NWSPointProperties struct {
-	GridId         string
-	GridX          int
-	GridY          int
-	Forecast       string
-	ForecastHourly string
+	GridId           string
+	GridX            int
+	GridY            int
+	Forecast         string
+	ForecastHourly   string
+	RelativeLocation PointLocation
 }
 
 type NWSPoint struct {
