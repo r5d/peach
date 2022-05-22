@@ -10,6 +10,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"regexp"
+	"strconv"
 	"time"
 
 	"ricketyspace.net/peach/nws"
@@ -27,6 +29,9 @@ var peachFS embed.FS
 
 // HTML templates.
 var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl"))
+
+// lat,long regex.
+var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`)
 
 type Weather struct {
 	Location string
@@ -63,13 +68,30 @@ func init() {
 }
 
 func main() {
+	// static files handler.
 	http.Handle("/static/", http.FileServer(http.FS(peachFS)))
+
+	// default handler.
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if len(r.URL.Path[1:]) != 0 {
+		if r.URL.Path == "/" {
+			http.Redirect(w, r, "/41.115,-83.177", 302)
+			return
+		}
+
+		m := latLngRegex.FindStringSubmatch(r.URL.Path)
+		if len(m) != 3 {
 			http.NotFound(w, r)
 			return
 		}
-		showWeather(w, 41.115, -83.177)
+		lat, err := strconv.ParseFloat(m[1], 32)
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+		}
+		lng, err := strconv.ParseFloat(m[2], 32)
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+		}
+		showWeather(w, float32(lat), float32(lng))
 	})
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
 }
