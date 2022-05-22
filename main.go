@@ -17,10 +17,10 @@ import (
 	"ricketyspace.net/peach/nws"
 )
 
-// peach port. Defaults to 8151
+// peach port. defaults to 8151
 var peachPort = flag.Int("p", 8151, "Port to run peach on")
 
-// peach listen address. Set during init.
+// peach listen address. set during init.
 var peachAddr = ""
 
 // holds static content.
