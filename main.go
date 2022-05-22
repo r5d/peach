@@ -22,11 +22,11 @@ var peachPort = flag.Int("p", 8151, "Port to run peach on")
 var peachAddr = ""
 
 // Holds static content.
-//go:embed html static
+//go:embed templates static
 var peachFS embed.FS
 
 // HTML templates.
-var peachTemplates = template.Must(template.ParseFS(peachFS, "html/*.html"))
+var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl"))
 
 type Weather struct {
 	Location string
@@ -100,7 +100,7 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 		return
 	}
 
-	err = peachTemplates.ExecuteTemplate(w, "weather.html", weather)
+	err = peachTemplates.ExecuteTemplate(w, "weather.tmpl", weather)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
