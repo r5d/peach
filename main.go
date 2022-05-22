@@ -103,7 +103,7 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 		return
 	}
 
-	// Get forecast
+	// get forecast
 	f, err := nws.Forecast(point)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -115,13 +115,14 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 		return
 	}
 
-	// Make weather
+	// make weather
 	weather, err := NewWeather(point, f, fh)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
+	// render.
 	err = peachTemplates.ExecuteTemplate(w, "weather.tmpl", weather)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -146,12 +147,12 @@ func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
 		Forecast: f.Properties.Periods[0].DetailedForecast,
 	}
 
-	// Build timeline.
+	// build timeline.
 	periods := []WeatherPeriod{}
 	max := 12
 	for i, period := range fh.Properties.Periods {
 		if i%2 != 0 {
-			continue // Take every other period
+			continue // take every other period
 		}
 		t, err := time.Parse(time.RFC3339, period.StartTime)
 		if err != nil {
