@@ -79,7 +79,7 @@ func main() {
 		}
 
 		m := latLngRegex.FindStringSubmatch(r.URL.Path)
-		if len(m) != 3 {
+		if len(m) != 3 || m[0] != r.URL.Path {
 			http.NotFound(w, r)
 			return
 		}
