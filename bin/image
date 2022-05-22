@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: ISC
+# Copyright © 2022 siddharth <s@ricketyspace.net>
+
+REPO="public.ecr.aws/w3h8c8i8/peach"
+TAG=$(date +%Y%m%d%H%M%S)
+if [ -z "$TAG" ]; then
+    echo "TAG empty"
+    exit 1
+fi
+
+docker build -t "$REPO":"$TAG" .
