@@ -5,6 +5,7 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
@@ -13,6 +14,12 @@ import (
 
 	"ricketyspace.net/peach/nws"
 )
+
+// Peach port. Defaults to 8151
+var peachPort = flag.Int("p", 8151, "Port to run peach on")
+
+// Peach listen address. Set during init.
+var peachAddr = ""
 
 // Holds static content.
 //go:embed html static
@@ -47,6 +54,14 @@ type WeatherTimeline struct {
 	Periods []WeatherPeriod
 }
 
+func init() {
+	flag.Parse()
+	if *peachPort < 80 {
+		log.Fatalf("port number is invalid: %v", *peachPort)
+	}
+	peachAddr = fmt.Sprintf(":%d", *peachPort)
+}
+
 func main() {
 	http.Handle("/static/", http.FileServer(http.FS(peachFS)))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +71,7 @@ func main() {
 		}
 		showWeather(w, 41.115, -83.177)
 	})
-	log.Fatal(http.ListenAndServe(":8151", nil))
+	log.Fatal(http.ListenAndServe(peachAddr, nil))
 }
 
 func showWeather(w http.ResponseWriter, lat, lng float32) {
