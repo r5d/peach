@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peach-deployment
+  labels:
+    app: peach
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: peach
+  template:
+    metadata:
+      labels:
+        app: peach
+    spec:
+      containers:
+      - name: peach
+        image: public.ecr.aws/w3h8c8i8/peach:20220522131840
+        ports:
+        - containerPort: 8151
