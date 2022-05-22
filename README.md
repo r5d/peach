@@ -1,3 +1,3 @@
 # peach
 
-A weather site.
+A weather site. It's work in progress.
