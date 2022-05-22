@@ -1,4 +1,4 @@
-SH_FILES=image
+SH_FILES=image image-push
 
 all: check fmt
 .PHONY: all

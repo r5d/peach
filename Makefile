@@ -20,3 +20,7 @@ clean:
 image:
 	./bin/image
 .PHONY: image
+
+image-push:
+	./bin/image-push
+.PHONY: image-push
