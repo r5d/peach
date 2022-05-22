@@ -17,17 +17,17 @@ import (
 	"ricketyspace.net/peach/nws"
 )
 
-// Peach port. Defaults to 8151
+// peach port. Defaults to 8151
 var peachPort = flag.Int("p", 8151, "Port to run peach on")
 
-// Peach listen address. Set during init.
+// peach listen address. Set during init.
 var peachAddr = ""
 
-// Holds static content.
+// holds static content.
 //go:embed templates static
 var peachFS embed.FS
 
-// HTML templates.
+// html templates.
 var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl"))
 
 // lat,long regex.
