@@ -1,42 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>peach</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="author" content="siddharth">
-    <link rel="preload" href="/static/peach.css" as="style" />
-    <style>@import url("/static/peach.css");</style>
-</head>
-<body>
-  <div class="peach-container">
-    <div class="location block">
-      <p>{{.Location}}</p>
-    </div>
+	<head>
+		<meta charset="UTF-8">
+		<title>peach - {{.Location}}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="siddharth">
+		<link rel="preload" href="/static/peach.css" as="style" />
+		<style>@import url("/static/peach.css");</style>
+	</head>
+	<body>
+		<div class="root-container">
+			<div class="header-container">
+				<header class="header">
+					<hgroup>
+						<h1>{{.Location}}</h1>
+					</hgroup>
+				</header>
+			</div>
 
-    <div class="summary">
-      <div class="now">
-	<p class="forecast">{{.Now.Forecast}}</p>
-	<p class="tempature">{{.Now.Temperature}}{{.Now.TemperatureUnit}}</p>
-	<p class="wind">{{.Now.WindSpeed}} {{.Now.WindDirection}}</p>
-      </div>
-      <div class="current-period">
-	<p class="forecast">{{.Period.Forecast}}</p>
-      </div>
-    </div>
+			<div class="main-container">
+				<div class="period-container">
 
-    {{ if .Timeline }}
-    <div class="timeline">
-      <div class="container">
-	{{ range .Timeline.Periods }}
-	<div class="period">
-	  <p class="temperature">{{.Temperature}}{{.TemperatureUnit}}</p>
-	  <p class="hour">{{printf "%d" .Hour}}hrs</p>
-	</div>
-	{{ end }}
-      </div>
-    </div>
-    {{ end }}
+					<div class="now-container">
+						<div class="temperature-forecast-container">
+							<div class="temperature">
+								{{.Now.Temperature}}{{.Now.TemperatureUnit}}
+							</div>
+							<div class="forecast">
+								{{.Now.Forecast}}
+							</div>
+						</div> <!-- temperature-forecast-container -->
 
-  </div>
-</body>
+						<div class="wind">
+							{{.Now.WindSpeed}} {{.Now.WindDirection}}
+						</div>
+					</div> <!-- now-container end -->
+
+					<div class="current-period">
+						<p class="forecast">{{.Period.Forecast}}</p>
+					</div>
+				</div> <!-- period-container end -->
+			</div>  <!-- main-container end -->
+
+			{{ if .Timeline }}
+			<div class="timeline">
+				<div class="container">
+					{{ range .Timeline.Periods }}
+					<div class="period">
+						<p class="temperature">{{.Temperature}}{{.TemperatureUnit}}</p>
+						<p class="hour">{{printf "%d" .Hour}}hrs</p>
+					</div>
+					{{ end }}
+				</div>
+			</div>
+			{{ end }}
+
+		</div> <!-- root-container end -->
+	</body>
+</html>

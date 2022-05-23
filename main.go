@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"ricketyspace.net/peach/nws"
@@ -133,8 +134,8 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
-		point.Properties.RelativeLocation.Properties.City,
-		point.Properties.RelativeLocation.Properties.State,
+		strings.ToLower(point.Properties.RelativeLocation.Properties.City),
+		strings.ToLower(point.Properties.RelativeLocation.Properties.State),
 	)
 	w.Now = WeatherNow{
 		Temperature:     fh.Properties.Periods[0].Temperature,
