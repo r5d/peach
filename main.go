@@ -150,7 +150,7 @@ func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
 
 	// build timeline.
 	periods := []WeatherPeriod{}
-	max := 12
+	max := 6
 	for i, period := range fh.Properties.Periods {
 		if i%2 != 0 {
 			continue // take every other period
