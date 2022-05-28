@@ -35,6 +35,7 @@ var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl")
 var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`)
 
 type Weather struct {
+	Title    string
 	Location string
 	Now      WeatherNow
 	Period   WeatherPeriod
@@ -137,6 +138,7 @@ func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
 		strings.ToLower(point.Properties.RelativeLocation.Properties.City),
 		strings.ToLower(point.Properties.RelativeLocation.Properties.State),
 	)
+	w.Title = w.Location
 	w.Now = WeatherNow{
 		Temperature:     fh.Properties.Periods[0].Temperature,
 		TemperatureUnit: fh.Properties.Periods[0].TemperatureUnit,
