@@ -113,6 +113,24 @@ body {
     color: rgb(150,150,150)
 }
 
+.search-link-container {
+    position: absolute;
+    right: 0px;
+    top: 30px;
+    font-size: 1.5em;
+    font-weight: 900;
+    transform: rotate(-45deg);
+}
+
+.search-link-container a {
+    text-decoration: none;
+    color: rgb(255,255,255);
+}
+
+.search-link-container a:after {
+    content: '➤';
+    color: rgb(0,0,0);
+}
 
 /** search **/
 .search-container .search-form {
