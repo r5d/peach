@@ -16,6 +16,24 @@ spec:
     spec:
       containers:
       - name: peach
-        image: public.ecr.aws/w3h8c8i8/peach:20220523000158
+        image: public.ecr.aws/w3h8c8i8/peach:20220528135201
         ports:
-        - containerPort: 8151
+          - containerPort: 8151
+            name: peach-port
+        env:
+          - name: PEACH_PHOTON_URL
+            value: https://photon.komoot.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: peach-service
+spec:
+  type: NodePort
+  selector:
+    app: peach
+  ports:
+    - protocol: TCP
+      port: 8151
+      targetPort: peach-port
+      nodePort: 30151
