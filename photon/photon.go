@@ -108,6 +108,7 @@ func Geocode(location string) ([]Coordinates, error) {
 	}
 
 	// Make matching coordinates list.
+	names := map[string]bool{}
 	for _, feature := range r.Features {
 		if feature.Properties.CountryCode != "US" {
 			continue // skip
@@ -120,6 +121,11 @@ func Geocode(location string) ([]Coordinates, error) {
 			feature.Properties.Name,
 			feature.Properties.State,
 		)
+		if names[c.Name] {
+			continue // skip.
+		}
+		names[c.Name] = true
+
 		mCoords = append(mCoords, c)
 	}
 	return mCoords, nil
