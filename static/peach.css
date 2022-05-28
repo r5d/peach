@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: ISC
  */
 
+/** peach **/
 @font-face {
   font-family: Roboto;
   src: url('/static/font/RobotoFlex-Regular.ttf');
@@ -32,6 +33,8 @@ body {
     }
 }
 
+
+/** weather **/
 .header-container,
 .main-container {
     display: flex;
@@ -108,4 +111,61 @@ body {
 .periods-container .period  .hour {
     font-size: 0.8em;
     color: rgb(150,150,150)
+}
+
+
+/** search **/
+.search-container .search-form {
+    display: flex;
+    flex-direction: row;
+    column-gap: 15px;
+    align-items: center;
+}
+
+.search-container .search-form  .search-box {
+    flex-basis: 70%;
+}
+
+.search-container .search-form  .search-box .location {
+    width: 100%;
+    font-size: 2em;
+    border: 2px solid rgb(0,0,0);
+}
+
+.search-container .search-form  .btn-block .search-btn {
+    cursor: pointer;
+    border: none;
+    background-color: rgb(255,255,255);
+    color: rgb(0,0,0);
+    font-size: 2.8em;
+}
+
+.message-container {
+    font-size: 1.2em;
+}
+
+.message-container p {
+    margin: 5px 0 5px 0;
+}
+
+.search-result-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+}
+
+.search-result-container  .item {
+    font-size: 1.8em;
+}
+
+.search-result-container  .location-name a {
+    text-decoration: none;
+    color: rgb(0,0,0);
+    font-weight: 600;
+    padding: 3px 5px 5px 5px;
+}
+
+.search-result-container .location-name a:hover {
+    transition: background-color 0.3s linear;
+    background-color: rgb(245,245,245);
 }
