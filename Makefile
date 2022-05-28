@@ -7,10 +7,10 @@ peach: fmt
 	go build ${BUILD_OPTS}
 
 fmt:
-	go fmt ${MOD} ${MOD}/client ${MOD}/nws
+	go fmt ${MOD} ${MOD}/client ${MOD}/nws ${MOD}/photon
 
 test:
-	go test ${MOD}/client ${MOD}/nws ${ARGS}
+	go test ${MOD}/client ${MOD}/nws ${MOD}/photon ${ARGS}
 .PHONY: test
 
 clean:
