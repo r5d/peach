@@ -1,4 +1,4 @@
-// Copyright © 2022 siddharth <s@ricketyspace.net>
+// Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 // SPDX-License-Identifier: ISC
 
 package main

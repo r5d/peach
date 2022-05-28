@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: ISC
-# Copyright © 2022 siddharth <s@ricketyspace.net>
+# Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 
 FROM golang:1.18.2
 

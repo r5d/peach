@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # SPDX-License-Identifier: ISC
-# Copyright © 2022 siddharth <s@ricketyspace.net>
+# Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 
 REPO="public.ecr.aws/w3h8c8i8/peach"
 

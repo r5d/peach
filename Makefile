@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: ISC
-# Copyright © 2021 siddharth <s@ricketyspace.net>
+# Copyright © 2021 siddharth ravikumar <s@ricketyspace.net>
 
 MOD=ricketyspace.net/peach
 
