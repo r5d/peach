@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>peach - {{.Title}}</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="author" content="siddharth ravikumar">
+		<link rel="preload" href="/static/peach.css" as="style" />
+		<style>@import url("/static/peach.css");</style>
+	</head>
+	<body>
+		<div class="peach">
+			<div class="root-container">
+
+				<div class="search-container">
+					<form method="post">
+						<div class="search-box">
+							<input type="text"  class="location" placeholder="us city"
+								value="{{ .Location }}" name="location" required>
+						</div>
+						<div class="search-btn">
+							<input type="submit" value="search">
+						</div>
+					</form>
+				</div>
+
+				{{ if .Message }}
+				<div class="message-container">
+					<div class="message-block">
+						<p>{{ .Message }}</p>
+					</div>
+				</div>
+				{{ end }}
+
+				{{ if .MatchingCoords }}
+				<div class="search-result-container">
+					{{ range .MatchingCoords }}
+					<div class="item">
+						<div class="location-name">
+							<a href="/{{ printf "%.4f,%.4f" .Lat .Lng }}">{{ .Name }}</a>
+						</div>
+					</div>
+					{{ end }}
+				</div>
+				{{ end }}
+
+			</div> <!-- root-container end -->
+		</div> <!-- peach end -->
+	</body>
+</html>

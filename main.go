@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"ricketyspace.net/peach/nws"
+	"ricketyspace.net/peach/photon"
 )
 
 // peach port. defaults to 8151
@@ -61,6 +62,13 @@ type WeatherTimeline struct {
 	Periods []WeatherPeriod
 }
 
+type Search struct {
+	Title          string
+	Location       string
+	Message        string
+	MatchingCoords []photon.Coordinates
+}
+
 func init() {
 	flag.Parse()
 	if *peachPort < 80 {
@@ -72,6 +80,9 @@ func init() {
 func main() {
 	// static files handler.
 	http.Handle("/static/", http.FileServer(http.FS(peachFS)))
+
+	// search handler.
+	http.HandleFunc("/search", showSearch)
 
 	// default handler.
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +106,8 @@ func main() {
 		}
 		showWeather(w, float32(lat), float32(lng))
 	})
+
+	// start server
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
 }
 
@@ -127,7 +140,26 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 	// render.
 	err = peachTemplates.ExecuteTemplate(w, "weather.tmpl", weather)
 	if err != nil {
+		log.Printf("weather: template: %v", err)
+		return
+	}
+}
+
+func showSearch(w http.ResponseWriter, r *http.Request) {
+	// Search is disabled if photon is not enabled.
+	if !photon.Enabled() {
+		http.NotFound(w, r)
+		return
+	}
+
+	search, err := NewSearch(r)
+	if err != nil {
 		http.Error(w, err.Error(), 500)
+		return
+	}
+	err = peachTemplates.ExecuteTemplate(w, "search.tmpl", search)
+	if err != nil {
+		log.Printf("search: template: %v", err)
 		return
 	}
 }
@@ -177,4 +209,37 @@ func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
 	}
 
 	return w, nil
+}
+
+func NewSearch(r *http.Request) (*Search, error) {
+	s := new(Search)
+	s.Title = "search"
+
+	if r.Method == "GET" {
+		return s, nil
+	}
+
+	// get location.
+	err := r.ParseForm()
+	if err != nil {
+		return s, fmt.Errorf("form: %v", err)
+	}
+	location := strings.TrimSpace(r.PostForm.Get("location"))
+	s.Location = location
+	if len(location) < 2 {
+		s.Message = "location invalid"
+	}
+
+	// try to fetch matching coordinates.
+	s.MatchingCoords, err = photon.Geocode(location)
+	if err != nil {
+		log.Printf("search: geocode: %v", err)
+		s.Message = "unable to lookup location"
+		return s, nil
+	}
+	if len(s.MatchingCoords) < 1 {
+		s.Message = "location not found"
+		return s, nil
+	}
+	return s, nil
 }
