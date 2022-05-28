@@ -80,7 +80,7 @@ func Geocode(location string) ([]Coordinates, error) {
 	q := url.Values{}
 	q.Add("q", location)
 	q.Add("osm_tag", "place:city")
-	q.Add("limit", "5")
+	q.Add("limit", "10")
 	u.RawQuery = q.Encode()
 
 	// Make request.
