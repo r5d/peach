@@ -115,8 +115,8 @@ body {
 
 .search-link-container {
     position: absolute;
-    right: 0px;
-    top: 30px;
+    right: 5px;
+    top: 0px;
     font-size: 1.5em;
     font-weight: 900;
     transform: rotate(-45deg);
@@ -124,11 +124,6 @@ body {
 
 .search-link-container a {
     text-decoration: none;
-    color: rgb(255,255,255);
-}
-
-.search-link-container a:after {
-    content: '➤';
     color: rgb(0,0,0);
 }
 
@@ -136,26 +131,38 @@ body {
 .search-container .search-form {
     display: flex;
     flex-direction: row;
-    column-gap: 15px;
-    align-items: center;
+    align-items: baseline;
+    justify-content: center;
 }
 
 .search-container .search-form  .search-box {
-    flex-basis: 70%;
 }
 
 .search-container .search-form  .search-box .location {
-    width: 100%;
-    font-size: 2em;
-    border: 2px solid rgb(0,0,0);
+    font-size: 1.5em;
+    border: 0;
+}
+
+.search-container .search-form  .search-box .location:focus-within {
+    border: 0;
+    outline: 0;
+    border-bottom: 2px solid rgb(0,0,0);
+}
+
+.search-container .search-form  .search-box .location::placeholder {
+    color: rgb(240,240,240);
+    font-weight: 900;
 }
 
 .search-container .search-form  .btn-block .search-btn {
     cursor: pointer;
     border: none;
-    background-color: rgb(255,255,255);
-    color: rgb(0,0,0);
-    font-size: 2.8em;
+    background-color: rgb(0 0 0);
+    color: rgb(255 255 255);
+    font-size: 1.3em;
+    padding: 3px 10px 3px 10px;
+    border-radius: 8px;
+    font-weight: 900;
 }
 
 .message-container {
@@ -164,6 +171,7 @@ body {
 
 .message-container p {
     margin: 5px 0 5px 0;
+    padding: 0 0 0 5px;
 }
 
 .search-result-container {
@@ -173,7 +181,7 @@ body {
 }
 
 .search-result-container  .item {
-    font-size: 1.8em;
+    font-size: 1.5em;
 }
 
 .search-result-container  .location-name a {
