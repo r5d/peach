@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: ISC
 
 // Functions for accessing the National Weather Service API.
-// TODO: remove NWS prefix from all types.
 package nws
 
 import (
@@ -22,7 +21,7 @@ type PointLocation struct {
 	Properties PointLocationProperties
 }
 
-type NWSPointProperties struct {
+type PointProperties struct {
 	GridId           string
 	GridX            int
 	GridY            int
@@ -31,11 +30,11 @@ type NWSPointProperties struct {
 	RelativeLocation PointLocation
 }
 
-type NWSPoint struct {
-	Properties NWSPointProperties
+type Point struct {
+	Properties PointProperties
 }
 
-type NWSForecastPeriod struct {
+type ForecastPeriod struct {
 	Number           int
 	Name             string
 	StartTime        string
@@ -50,29 +49,29 @@ type NWSForecastPeriod struct {
 	DetailedForecast string
 }
 
-type NWSForecastProperties struct {
-	Periods []NWSForecastPeriod
+type ForecastProperties struct {
+	Periods []ForecastPeriod
 }
 
-type NWSForecast struct {
-	Properties NWSForecastProperties
+type Forecast struct {
+	Properties ForecastProperties
 }
 
-type NWSError struct {
+type Error struct {
 	Title  string
 	Type   string
 	Status int
 	Detail string
 }
 
-func (e NWSError) Error() string {
+func (e Error) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
 // NWS `/points` endpoint.
 //
-// TODO: return NWSError instead of error
-func Points(lat, lng float32) (*NWSPoint, error) {
+// TODO: return Error instead of error
+func Points(lat, lng float32) (*Point, error) {
 	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
 	resp, err := client.Get(url)
 	if err != nil {
@@ -87,7 +86,7 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 
 	// Check if the request failed.
 	if resp.StatusCode != 200 {
-		perr := new(NWSError)
+		perr := new(Error)
 		err := json.Unmarshal(body, perr)
 		if err != nil {
 			return nil, fmt.Errorf("points: json: %v", err)
@@ -96,7 +95,7 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 	}
 
 	// Unmarshal.
-	point := new(NWSPoint)
+	point := new(Point)
 	err = json.Unmarshal(body, point)
 	if err != nil {
 		return nil, fmt.Errorf("points: decode: %v", err)
@@ -112,8 +111,8 @@ func Points(lat, lng float32) (*NWSPoint, error) {
 
 // NWS forecast endpoint.
 //
-// TODO: return NWSError instead of error.
-func Forecast(point *NWSPoint) (*NWSForecast, error) {
+// TODO: return Error instead of error.
+func GetForecast(point *Point) (*Forecast, error) {
 	if point == nil {
 		return nil, fmt.Errorf("forecast: point nil")
 	}
@@ -135,7 +134,7 @@ func Forecast(point *NWSPoint) (*NWSForecast, error) {
 
 	// Check if the request failed.
 	if resp.StatusCode != 200 {
-		perr := new(NWSError)
+		perr := new(Error)
 		err := json.Unmarshal(body, perr)
 		if err != nil {
 			return nil, fmt.Errorf("forecast: json: %v", err)
@@ -144,7 +143,7 @@ func Forecast(point *NWSPoint) (*NWSForecast, error) {
 	}
 
 	// Unmarshal.
-	forecast := new(NWSForecast)
+	forecast := new(Forecast)
 	err = json.Unmarshal(body, forecast)
 	if err != nil {
 		return nil, fmt.Errorf("forecast: decode: %v", err)
@@ -157,8 +156,8 @@ func Forecast(point *NWSPoint) (*NWSForecast, error) {
 
 // NWS forecast hourly endpoint.
 //
-// TODO: return NWSError instead of error
-func ForecastHourly(point *NWSPoint) (*NWSForecast, error) {
+// TODO: return Error instead of error
+func GetForecastHourly(point *Point) (*Forecast, error) {
 	if point == nil {
 		return nil, fmt.Errorf("forecast hourly: point nil")
 	}
@@ -180,7 +179,7 @@ func ForecastHourly(point *NWSPoint) (*NWSForecast, error) {
 
 	// Check if the request failed.
 	if resp.StatusCode != 200 {
-		perr := new(NWSError)
+		perr := new(Error)
 		err := json.Unmarshal(body, perr)
 		if err != nil {
 			return nil, fmt.Errorf("forecast hourly: json: %v", err)
@@ -189,7 +188,7 @@ func ForecastHourly(point *NWSPoint) (*NWSForecast, error) {
 	}
 
 	// Unmarshal.
-	forecast := new(NWSForecast)
+	forecast := new(Forecast)
 	err = json.Unmarshal(body, forecast)
 	if err != nil {
 		return nil, fmt.Errorf("forecast hourly: decode: %v", err)

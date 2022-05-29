@@ -42,7 +42,7 @@ func TestPoints(t *testing.T) {
 	}
 }
 
-func TestForecast(t *testing.T) {
+func TestGetForecast(t *testing.T) {
 	// Get point.
 	np, err := Points(41.115, -83.177)
 	if err != nil {
@@ -51,7 +51,7 @@ func TestForecast(t *testing.T) {
 	}
 
 	// Get forecast.
-	fc, err := Forecast(np)
+	fc, err := GetForecast(np)
 	if err != nil {
 		t.Errorf("error: %v", err)
 		return
@@ -96,7 +96,7 @@ func TestForecast(t *testing.T) {
 	}
 }
 
-func TestForecastHourly(t *testing.T) {
+func TestGetForecastHourly(t *testing.T) {
 	// Get point.
 	np, err := Points(41.115, -83.177)
 	if err != nil {
@@ -105,7 +105,7 @@ func TestForecastHourly(t *testing.T) {
 	}
 
 	// Get forecast hourly.
-	fc, err := ForecastHourly(np)
+	fc, err := GetForecastHourly(np)
 	if err != nil {
 		t.Errorf("error: %v", err)
 		return

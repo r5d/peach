@@ -119,12 +119,12 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 	}
 
 	// get forecast
-	f, err := nws.Forecast(point)
+	f, err := nws.GetForecast(point)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
-	fh, err := nws.ForecastHourly(point)
+	fh, err := nws.GetForecastHourly(point)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -164,7 +164,7 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func NewWeather(point *nws.NWSPoint, f, fh *nws.NWSForecast) (*Weather, error) {
+func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
 		strings.ToLower(point.Properties.RelativeLocation.Properties.City),
