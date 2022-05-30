@@ -17,6 +17,7 @@ import (
 
 	"ricketyspace.net/peach/nws"
 	"ricketyspace.net/peach/photon"
+	"ricketyspace.net/peach/version"
 )
 
 // peach port. defaults to 8151
@@ -37,6 +38,7 @@ var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`
 
 type Weather struct {
 	Title    string
+	Version  string
 	Location string
 	Now      WeatherNow
 	Period   WeatherPeriod
@@ -64,6 +66,7 @@ type WeatherTimeline struct {
 
 type Search struct {
 	Title          string
+	Version        string
 	Location       string
 	Message        string
 	MatchingCoords []photon.Coordinates
@@ -78,9 +81,6 @@ func init() {
 }
 
 func main() {
-	// static files handler.
-	http.Handle("/static/", http.FileServer(http.FS(peachFS)))
-
 	// search handler.
 	http.HandleFunc("/search", showSearch)
 
@@ -106,6 +106,9 @@ func main() {
 		}
 		showWeather(w, float32(lat), float32(lng))
 	})
+
+	// static files handler.
+	http.HandleFunc("/static/", serveStaticFile)
 
 	// start server
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
@@ -164,6 +167,15 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func serveStaticFile(w http.ResponseWriter, r *http.Request) {
+	// Add Cache-Control header
+	w.Header().Set("Cache-Control", "max-age=604800")
+
+	// Serve.
+	server := http.FileServer(http.FS(peachFS))
+	server.ServeHTTP(w, r)
+}
+
 func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
@@ -171,6 +183,7 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 		strings.ToLower(point.Properties.RelativeLocation.Properties.State),
 	)
 	w.Title = w.Location
+	w.Version = version.Version
 	w.Now = WeatherNow{
 		Temperature:     fh.Properties.Periods[0].Temperature,
 		TemperatureUnit: fh.Properties.Periods[0].TemperatureUnit,
@@ -214,6 +227,7 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 func NewSearch(r *http.Request) (*Search, error) {
 	s := new(Search)
 	s.Title = "search"
+	s.Version = version.Version
 
 	if r.Method == "GET" {
 		return s, nil
