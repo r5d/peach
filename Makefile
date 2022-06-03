@@ -1,16 +1,22 @@
 # SPDX-License-Identifier: ISC
-# Copyright © 2021 siddharth ravikumar <s@ricketyspace.net>
+# Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 
 MOD=ricketyspace.net/peach
+PKGS=${MOD}/client ${MOD}/nws ${MOD}/photon
 
-peach: fmt
+peach: fix fmt
 	go build ${BUILD_OPTS}
 
 fmt:
-	go fmt ${MOD} ${MOD}/client ${MOD}/nws ${MOD}/photon
+	go fmt ${MOD} ${PKGS}
+.PHONY: fmt
+
+fix:
+	go fix ${MOD} ${PKGS}
+.PHONY: fix
 
 test:
-	go test ${MOD}/client ${MOD}/nws ${MOD}/photon ${ARGS}
+	go test ${PKGS} ${ARGS}
 .PHONY: test
 
 clean:
