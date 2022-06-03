@@ -86,6 +86,8 @@ func main() {
 
 	// default handler.
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		logRequest(r)
+
 		if r.URL.Path == "/" {
 			http.Redirect(w, r, "/41.115,-83.177", 302)
 			return
@@ -149,6 +151,8 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 }
 
 func showSearch(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+
 	// Search is disabled if photon is not enabled.
 	if !photon.Enabled() {
 		http.NotFound(w, r)
@@ -168,6 +172,8 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 }
 
 func serveStaticFile(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+
 	// Add Cache-Control header
 	w.Header().Set("Cache-Control", "max-age=604800")
 
@@ -256,4 +262,8 @@ func NewSearch(r *http.Request) (*Search, error) {
 		return s, nil
 	}
 	return s, nil
+}
+
+func logRequest(r *http.Request) {
+	log.Printf("%v - %v", r.RemoteAddr, r.URL)
 }
