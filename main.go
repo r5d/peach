@@ -43,7 +43,7 @@ type Weather struct {
 	Now             WeatherNow
 	Period          WeatherPeriod
 	Q2HTimeline     WeatherTimeline // Q2H forecast of the next 12 hours.
-	BiDailyTimeline WeatherTimeline // Bi-daily forecast.
+	BiDailyTimeline WeatherTimeline // BiDaily forecast for the next 3 days.
 }
 
 type WeatherNow struct {
@@ -229,9 +229,9 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 		Periods: q2hPeriods,
 	}
 
-	// Build BiDaily  timeline for the next 5 days.
+	// Build BiDaily  timeline for the next 3 days.
 	bdPeriods := []WeatherPeriod{}
-	max = 12
+	max = 8
 	for _, period := range f.Properties.Periods {
 		p := WeatherPeriod{
 			Name:            period.Name,
