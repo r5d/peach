@@ -37,12 +37,13 @@ var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl")
 var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`)
 
 type Weather struct {
-	Title    string
-	Version  string
-	Location string
-	Now      WeatherNow
-	Period   WeatherPeriod
-	Timeline WeatherTimeline
+	Title           string
+	Version         string
+	Location        string
+	Now             WeatherNow
+	Period          WeatherPeriod
+	Q2HTimeline     WeatherTimeline // Q2H forecast of the next 12 hours.
+	BiDailyTimeline WeatherTimeline // Bi-daily forecast.
 }
 
 type WeatherNow struct {
@@ -54,6 +55,7 @@ type WeatherNow struct {
 }
 
 type WeatherPeriod struct {
+	Name            string
 	Forecast        string
 	Hour            int
 	Temperature     int
@@ -201,8 +203,8 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 		Forecast: f.Properties.Periods[0].DetailedForecast,
 	}
 
-	// build timeline.
-	periods := []WeatherPeriod{}
+	// Build Q2H timeline for the 12 hours.
+	q2hPeriods := []WeatherPeriod{}
 	max := 6
 	for i, period := range fh.Properties.Periods {
 		if i%2 != 0 {
@@ -218,13 +220,32 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 			Temperature:     period.Temperature,
 			TemperatureUnit: period.TemperatureUnit,
 		}
-		periods = append(periods, p)
-		if len(periods) == max {
+		q2hPeriods = append(q2hPeriods, p)
+		if len(q2hPeriods) == max {
 			break
 		}
 	}
-	w.Timeline = WeatherTimeline{
-		Periods: periods,
+	w.Q2HTimeline = WeatherTimeline{
+		Periods: q2hPeriods,
+	}
+
+	// Build BiDaily  timeline for the next 5 days.
+	bdPeriods := []WeatherPeriod{}
+	max = 12
+	for _, period := range f.Properties.Periods {
+		p := WeatherPeriod{
+			Name:            period.Name,
+			Forecast:        period.DetailedForecast,
+			Temperature:     period.Temperature,
+			TemperatureUnit: period.TemperatureUnit,
+		}
+		bdPeriods = append(bdPeriods, p)
+		if len(bdPeriods) == max {
+			break
+		}
+	}
+	w.BiDailyTimeline = WeatherTimeline{
+		Periods: bdPeriods,
 	}
 
 	return w, nil

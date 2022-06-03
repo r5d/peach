@@ -47,10 +47,10 @@
 					</div> <!-- period-container end -->
 				</div>  <!-- main-container end -->
 
-				{{ if .Timeline }}
+				{{ if .Q2HTimeline }}
 				<div class="timeline-container">
 					<div class="periods-container">
-						{{ range .Timeline.Periods }}
+						{{ range .Q2HTimeline.Periods }}
 						<div class="period">
 							<div class="temperature">
 								{{.Temperature}}{{.TemperatureUnit}}
