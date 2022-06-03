@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: peach
-        image: public.ecr.aws/w3h8c8i8/peach:20220602221709
+        image: public.ecr.aws/w3h8c8i8/peach:20220602223353
         ports:
           - containerPort: 8151
             name: peach-port
