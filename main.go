@@ -265,5 +265,9 @@ func NewSearch(r *http.Request) (*Search, error) {
 }
 
 func logRequest(r *http.Request) {
-	log.Printf("%v - %v", r.RemoteAddr, r.URL)
+	addr := r.RemoteAddr
+	if len(r.Header.Get("X-Forwarded-For")) > 0 {
+		addr = r.Header.Get("X-Forwarded-For")
+	}
+	log.Printf("%v - %v - %v", addr, r.URL, r.Header.Get("User-agent"))
 }
