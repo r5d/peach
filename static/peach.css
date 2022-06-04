@@ -132,7 +132,7 @@ body {
     flex-direction: column;
     row-gap: 1px;
     border-radius: 3px;
-    border: 2px solid rgb(0,0,0);
+    border: 0.1px solid rgb(0,0,0);
     padding: 10px 10px;
 }
 
