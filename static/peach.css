@@ -80,7 +80,7 @@ body {
 .temperature-forecast-container .forecast {
     font-size: 1.8em;
     font-weight: 500;
-    color: rgb(90,90,90);
+    color: rgb(10,10,10);
     text-align: center;
 }
 
@@ -89,30 +89,66 @@ body {
     flex-direction: row;
     justify-content: center;
     column-gap: 10px;
-    color: rgb(90,90,90);
+    color: rgb(10,10,10);
 }
 
+/**  Q2H Timeline **/
 .timeline-container {
     display: flex;
     justify-content: center;
 }
 
-.periods-container {
+.timeline-container .periods-container {
     width: 440px;
     display: flex;
     justify-content: space-around;
     align-content: space-around;
 }
 
-.periods-container .period  .temperature {
+.timeline-container .periods-container .period  .temperature {
     font-size: 1.2em;
 }
 
-.periods-container .period  .hour {
+.timeline-container .periods-container .period  .hour {
     font-size: 0.8em;
-    color: rgb(150,150,150)
+    color: rgb(0,0,0);
 }
 
+/** BiDaily Timeline **/
+.bd-timeline-container {
+    display: flex;
+    justify-content: center;
+}
+
+.bd-timeline-container .periods-container {
+    width: 440px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+}
+
+.bd-timeline-container .periods-container  .period {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1px;
+    border-radius: 3px;
+    border: 2px solid rgb(0,0,0);
+    padding: 10px 10px;
+}
+
+.bd-timeline-container .periods-container  .period .name {
+    font-size: 1.5em;
+}
+
+.bd-timeline-container .periods-container  .period .temperature {
+    font-size: 1.2em;
+}
+
+.bd-timeline-container .periods-container  .period .forecast {
+    font-size: 0.9em;
+}
+
+/** Search **/
 .search-link-container {
     position: absolute;
     right: 10px;

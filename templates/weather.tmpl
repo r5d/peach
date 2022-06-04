@@ -61,6 +61,27 @@
 				</div>
 				{{ end }}
 
+
+				{{ if .BiDailyTimeline }}
+				<div class="bd-timeline-container">
+					<div class="periods-container">
+						{{ range .BiDailyTimeline.Periods }}
+						<div class="period">
+							<div class="name">
+								{{ .Name }}
+							</div>
+							<div class="temperature">
+								{{.Temperature}}{{.TemperatureUnit}}
+							</div>
+							<div class="forecast">
+								{{ .Forecast }}
+							</div>
+						</div>
+						{{ end }}
+					</div>
+				</div>
+				{{ end }}
+
 				<div class="search-link-container">
 					<a href="/search">
 						➤
