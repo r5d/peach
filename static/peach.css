@@ -92,17 +92,6 @@ body {
     color: rgb(90,90,90);
 }
 
-.current-period-container {
-    font-size: 0.9em;
-    color: rgb(150,150,150);
-}
-
-@media (max-width: 450px)  {
-    .current-period-container {
-	text-align: center;
-    }
-}
-
 .timeline-container {
     display: flex;
     justify-content: center;

@@ -41,7 +41,6 @@ type Weather struct {
 	Version         string
 	Location        string
 	Now             WeatherNow
-	Period          WeatherPeriod
 	Q2HTimeline     WeatherTimeline // Q2H forecast of the next 12 hours.
 	BiDailyTimeline WeatherTimeline // BiDaily forecast for the next 3 days.
 }
@@ -198,9 +197,6 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 		Forecast:        fh.Properties.Periods[0].ShortForecast,
 		WindSpeed:       fh.Properties.Periods[0].WindSpeed,
 		WindDirection:   fh.Properties.Periods[0].WindDirection,
-	}
-	w.Period = WeatherPeriod{
-		Forecast: f.Properties.Periods[0].DetailedForecast,
 	}
 
 	// Build Q2H timeline for the 12 hours.
