@@ -150,31 +150,15 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 		return nil, fmt.Errorf("forecast hourly: link empty")
 	}
 
-	// Get the forecast
-	resp, err := client.Get(point.Properties.ForecastHourly)
-	if err != nil {
-		return nil, fmt.Errorf("forecast hourly: get: %v", err)
-	}
-
-	// Parse response body.
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("forecast hourly: body: %v", err)
-	}
-
-	// Check if the request failed.
-	if resp.StatusCode != 200 {
-		perr := new(Error)
-		err := json.Unmarshal(body, perr)
-		if err != nil {
-			return nil, fmt.Errorf("forecast hourly: json: %v", err)
-		}
-		return nil, fmt.Errorf("forecast: %v", perr)
+	// Get the hourly forecast.
+	body, nwsErr := get(point.Properties.ForecastHourly)
+	if nwsErr != nil {
+		return nil, fmt.Errorf("forecast hourly: %v", nwsErr)
 	}
 
 	// Unmarshal.
 	forecast := new(Forecast)
-	err = json.Unmarshal(body, forecast)
+	err := json.Unmarshal(body, forecast)
 	if err != nil {
 		return nil, fmt.Errorf("forecast hourly: decode: %v", err)
 	}
