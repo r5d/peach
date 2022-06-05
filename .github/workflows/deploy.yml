@@ -12,9 +12,9 @@ jobs:
       steps:
         - uses: actions/checkout@v2
         - uses: superfly/flyctl-actions/setup-flyctl@master
-        - run: echo "Spike: $FLY_SPIKE"
+        - run: echo 'Spike: ' $FLY_SPIKY
           env:
-            FLY_SPOOK: ${{ secrets.FLY_SPIKY }}
+            FLY_SPIKY: ${{ secrets.FLY_SPIKY }}
         - run: flyctl deploy --remote-only
           env:
             FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
