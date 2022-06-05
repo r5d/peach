@@ -9,6 +9,7 @@ jobs:
   deploy:
       name: deploy peach
       runs-on: ubuntu-latest
+      environment: fly
       steps:
         - uses: actions/checkout@v2
         - uses: superfly/flyctl-actions/setup-flyctl@master
