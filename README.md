@@ -1,3 +1,3 @@
 # peach
 
-A weather site (wip).
+A weather site.
