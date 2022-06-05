@@ -4,6 +4,13 @@ A weather site.
 
 ## building
 
+### build requirements
+
+ - make
+ - go version 16 or higher
+
+To build the peach binary, just do:
+
 ```bash
 make
 ```
