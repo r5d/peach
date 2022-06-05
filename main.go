@@ -82,10 +82,10 @@ func init() {
 }
 
 func main() {
-	// search handler.
+	// Search handler.
 	http.HandleFunc("/search", showSearch)
 
-	// default handler.
+	// Default handler.
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		logRequest(r)
 
@@ -110,10 +110,10 @@ func main() {
 		showWeather(w, float32(lat), float32(lng))
 	})
 
-	// static files handler.
+	// Static files handler.
 	http.HandleFunc("/static/", serveStaticFile)
 
-	// start server
+	// Start server
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
 }
 
@@ -124,7 +124,7 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 		return
 	}
 
-	// get forecast
+	// Get forecast
 	f, err := nws.GetForecast(point)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
@@ -136,14 +136,14 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 		return
 	}
 
-	// make weather
+	// Make weather
 	weather, err := NewWeather(point, f, fh)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 
-	// render.
+	// Render.
 	err = peachTemplates.ExecuteTemplate(w, "weather.tmpl", weather)
 	if err != nil {
 		log.Printf("weather: template: %v", err)
@@ -204,7 +204,7 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 	max := 6
 	for i, period := range fh.Properties.Periods {
 		if i%2 != 0 {
-			continue // take every other period
+			continue // Take every other period
 		}
 		t, err := time.Parse(time.RFC3339, period.StartTime)
 		if err != nil {
@@ -256,7 +256,7 @@ func NewSearch(r *http.Request) (*Search, error) {
 		return s, nil
 	}
 
-	// get location.
+	// Get location.
 	err := r.ParseForm()
 	if err != nil {
 		return s, fmt.Errorf("form: %v", err)
@@ -267,7 +267,7 @@ func NewSearch(r *http.Request) (*Search, error) {
 		s.Message = "location invalid"
 	}
 
-	// try to fetch matching coordinates.
+	// Try to fetch matching coordinates.
 	s.MatchingCoords, err = photon.Geocode(location)
 	if err != nil {
 		log.Printf("search: geocode: %v", err)
