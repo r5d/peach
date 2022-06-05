@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
 
 	"ricketyspace.net/peach/client"
 )
@@ -197,4 +198,58 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 		return nil, fmt.Errorf("forecast hourly: periods empty")
 	}
 	return forecast, nil
+}
+
+// HTTP GET a NWS endpoint.
+func get(url string) ([]byte, *Error) {
+	tries := 5
+	retryDelay := 100 * time.Millisecond
+	for {
+		resp, err := client.Get(url)
+		if err != nil {
+			return nil, &Error{
+				Title:  fmt.Sprintf("http get failed: %v", url),
+				Type:   "http-get",
+				Status: 500,
+				Detail: err.Error(),
+			}
+		}
+		if tries > 0 && resp.StatusCode != 200 {
+			tries -= 1
+
+			// Wait before re-try.
+			time.Sleep(retryDelay)
+
+			retryDelay *= 2 // Exponential back-off delay.
+			continue        // Re-try
+		}
+
+		// Parse response body.
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, &Error{
+				Title:  fmt.Sprintf("parsing body: %v", url),
+				Type:   "response-body",
+				Status: 500,
+				Detail: err.Error(),
+			}
+		}
+
+		// Check if the request failed.
+		if resp.StatusCode != 200 {
+			nwsErr := Error{}
+			err := json.Unmarshal(body, &nwsErr)
+			if err != nil {
+				return nil, &Error{
+					Title:  fmt.Sprintf("json decode: %v", url),
+					Type:   "json-decode",
+					Status: 500,
+					Detail: err.Error(),
+				}
+			}
+			return nil, &nwsErr
+		}
+		// Response OK.
+		return body, nil
+	}
 }
