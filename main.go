@@ -20,20 +20,20 @@ import (
 	"ricketyspace.net/peach/version"
 )
 
-// peach port. defaults to 8151
+// Peach port. Defaults to 8151
 var peachPort = flag.Int("p", 8151, "Port to run peach on")
 
-// peach listen address. set during init.
+// Peach listen address. Set during init.
 var peachAddr = ""
 
-// holds static content.
+// Holds static content.
 //go:embed templates static
 var peachFS embed.FS
 
-// html templates.
+// HTML templates.
 var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl"))
 
-// lat,long regex.
+// Lat,Long regex.
 var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`)
 
 type Weather struct {
