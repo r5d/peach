@@ -122,30 +122,14 @@ func GetForecast(point *Point) (*Forecast, error) {
 	}
 
 	// Get the forecast
-	resp, err := client.Get(point.Properties.Forecast)
-	if err != nil {
-		return nil, fmt.Errorf("forecast: get: %v", err)
-	}
-
-	// Parse response body.
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("forecast: body: %v", err)
-	}
-
-	// Check if the request failed.
-	if resp.StatusCode != 200 {
-		perr := new(Error)
-		err := json.Unmarshal(body, perr)
-		if err != nil {
-			return nil, fmt.Errorf("forecast: json: %v", err)
-		}
-		return nil, fmt.Errorf("forecast: %v", perr)
+	body, nwsErr := get(point.Properties.Forecast)
+	if nwsErr != nil {
+		return nil, fmt.Errorf("forecast: %v", nwsErr)
 	}
 
 	// Unmarshal.
 	forecast := new(Forecast)
-	err = json.Unmarshal(body, forecast)
+	err := json.Unmarshal(body, forecast)
 	if err != nil {
 		return nil, fmt.Errorf("forecast: decode: %v", err)
 	}
