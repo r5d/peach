@@ -1,6 +1,8 @@
 # peach
 
-A weather site.
+A [weather site][peach].
+
+[peach]: https://peach.ricketyspace.net
 
 ## building
 
