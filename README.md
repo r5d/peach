@@ -4,7 +4,7 @@ A weather site.
 
 ## building
 
-### build requirements
+Build requirements:
 
  - make
  - go version 16 or higher
