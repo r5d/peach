@@ -74,30 +74,14 @@ func (e Error) Error() string {
 // TODO: return Error instead of error
 func Points(lat, lng float32) (*Point, error) {
 	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, fmt.Errorf("points: http get: %v", err)
-	}
-
-	// Parse response body.
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("points: body: %v", err)
-	}
-
-	// Check if the request failed.
-	if resp.StatusCode != 200 {
-		perr := new(Error)
-		err := json.Unmarshal(body, perr)
-		if err != nil {
-			return nil, fmt.Errorf("points: json: %v", err)
-		}
-		return nil, fmt.Errorf("points: %v", perr)
+	body, nwsErr := get(url)
+	if nwsErr != nil {
+		return nil, fmt.Errorf("points: %v", nwsErr)
 	}
 
 	// Unmarshal.
 	point := new(Point)
-	err = json.Unmarshal(body, point)
+	err := json.Unmarshal(body, point)
 	if err != nil {
 		return nil, fmt.Errorf("points: decode: %v", err)
 	}
