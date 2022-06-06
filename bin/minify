@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: ISC
+# Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
+
+awk '{ gsub("^ *", ""); gsub(" {", "{"); printf "%s", $0 }' static/peach.css >static/peach.min.css

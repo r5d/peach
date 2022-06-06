@@ -1,4 +1,4 @@
-SH_FILES=
+SH_FILES=minify
 
 all: check fmt
 .PHONY: all
