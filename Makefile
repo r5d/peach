@@ -3,8 +3,9 @@
 
 MOD=ricketyspace.net/peach
 PKGS=${MOD}/client ${MOD}/nws ${MOD}/photon
+CSS=static/peach.min.css
 
-peach: fix fmt
+peach: fix fmt ${CSS}
 	go build ${BUILD_OPTS}
 
 fmt:
@@ -18,6 +19,9 @@ fix:
 test:
 	go test ${PKGS} ${ARGS}
 .PHONY: test
+
+${CSS}: static/peach.css
+	./bin/minify
 
 clean:
 	go clean
