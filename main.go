@@ -93,6 +93,10 @@ func main() {
 			http.Redirect(w, r, "/41.115,-83.177", 302)
 			return
 		}
+		if r.URL.Path == "/version" {
+			fmt.Fprintf(w, "v%s\n", version.Version)
+			return
+		}
 
 		m := latLngRegex.FindStringSubmatch(r.URL.Path)
 		if len(m) != 3 || m[0] != r.URL.Path {
