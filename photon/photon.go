@@ -1,7 +1,7 @@
 // Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 // SPDX-License-Identifier: ISC
 
-// Functions for accessing the Photo gecoding API.
+// Functions for accessing the Photon gecoding API.
 package photon
 
 import (
