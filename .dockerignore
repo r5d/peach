@@ -6,5 +6,4 @@
 Dockerfile
 bin
 fly.toml
-static/
-peach.css
+static/peach.css
