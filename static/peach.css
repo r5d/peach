@@ -1,9 +1,7 @@
-/**
- * Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
- * SPDX-License-Identifier: ISC
- */
+/* Copyright © 2022 siddharth ravikumar <s@ricketyspace.net> */
+/* SPDX-License-Identifier: ISC */
 
-/** peach **/
+/* Peach */
 @font-face {
   font-family: Roboto;
   src: url('/static/font/RobotoFlex-Regular.ttf');
@@ -39,7 +37,7 @@ body {
     }
 }
 
-/** weather **/
+/* Weather */
 .header-container,
 .main-container {
     display: flex;
@@ -92,7 +90,7 @@ body {
     color: rgb(10,10,10);
 }
 
-/**  Q2H Timeline **/
+/*  Q2H Timeline */
 .timeline-container {
     display: flex;
     justify-content: center;
@@ -114,7 +112,7 @@ body {
     color: rgb(0,0,0);
 }
 
-/** BiDaily Timeline **/
+/* BiDaily Timeline */
 .bd-timeline-container {
     display: flex;
     justify-content: center;
@@ -148,7 +146,7 @@ body {
     font-size: 0.9em;
 }
 
-/** Search **/
+/* Search */
 .search-link-container {
     position: absolute;
     right: 10px;
@@ -163,7 +161,6 @@ body {
     color: rgb(0,0,0);
 }
 
-/** search **/
 .search-container .search-form {
     display: flex;
     flex-direction: row;
