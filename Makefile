@@ -2,7 +2,7 @@
 # Copyright © 2022 siddharth ravikumar <s@ricketyspace.net>
 
 MOD=ricketyspace.net/peach
-PKGS=${MOD}/client ${MOD}/nws ${MOD}/photon
+PKGS=${MOD}/cache ${MOD}/client ${MOD}/nws ${MOD}/photon
 CSS=static/peach.min.css
 
 peach: fix fmt ${CSS}
