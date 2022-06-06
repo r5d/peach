@@ -22,11 +22,3 @@ test:
 clean:
 	go clean
 .PHONY: clean
-
-image:
-	./bin/image
-.PHONY: image
-
-image-push:
-	./bin/image-push
-.PHONY: image-push
