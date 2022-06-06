@@ -27,7 +27,7 @@ var peachPort = flag.Int("p", 8151, "Port to run peach on")
 var peachAddr = ""
 
 // Holds static content.
-//go:embed templates static
+//go:embed templates static/*.min.css static/font/*
 var peachFS embed.FS
 
 // HTML templates.
