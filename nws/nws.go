@@ -10,6 +10,7 @@ import (
 	"io"
 	"time"
 
+	"ricketyspace.net/peach/cache"
 	"ricketyspace.net/peach/client"
 )
 
@@ -65,6 +66,16 @@ type Error struct {
 	Detail string
 }
 
+var pCache *cache.Cache
+var fCache *cache.Cache
+var fhCache *cache.Cache
+
+func init() {
+	pCache = cache.NewCache()
+	fCache = cache.NewCache()
+	fhCache = cache.NewCache()
+}
+
 func (e Error) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
@@ -73,10 +84,19 @@ func (e Error) Error() string {
 //
 // TODO: return Error instead of error
 func Points(lat, lng float32) (*Point, error) {
-	url := fmt.Sprintf("https://api.weather.gov/points/%.4f,%.4f", lat, lng)
-	body, nwsErr := get(url)
-	if nwsErr != nil {
-		return nil, fmt.Errorf("points: %v", nwsErr)
+	var nwsErr *Error
+	var expires time.Time
+	var body []byte
+
+	ll := fmt.Sprintf("%.4f,%.4f", lat, lng)
+	if body = pCache.Get(ll); len(body) == 0 {
+		url := fmt.Sprintf("https://api.weather.gov/points/%s", ll)
+		body, expires, nwsErr = get(url)
+		if nwsErr != nil {
+			return nil, fmt.Errorf("points: %v", nwsErr)
+		}
+		// Cache it.
+		pCache.Set(ll, body, expires)
 	}
 
 	// Unmarshal.
@@ -98,6 +118,10 @@ func Points(lat, lng float32) (*Point, error) {
 //
 // TODO: return Error instead of error.
 func GetForecast(point *Point) (*Forecast, error) {
+	var nwsErr *Error
+	var expires time.Time
+	var body []byte
+
 	if point == nil {
 		return nil, fmt.Errorf("forecast: point nil")
 	}
@@ -105,10 +129,14 @@ func GetForecast(point *Point) (*Forecast, error) {
 		return nil, fmt.Errorf("forecast: link empty")
 	}
 
-	// Get the forecast
-	body, nwsErr := get(point.Properties.Forecast)
-	if nwsErr != nil {
-		return nil, fmt.Errorf("forecast: %v", nwsErr)
+	if body = fCache.Get(point.Properties.Forecast); len(body) == 0 {
+		// Get the forecast
+		body, expires, nwsErr = get(point.Properties.Forecast)
+		if nwsErr != nil {
+			return nil, fmt.Errorf("forecast: %v", nwsErr)
+		}
+		// Cache it.
+		fCache.Set(point.Properties.Forecast, body, expires)
 	}
 
 	// Unmarshal.
@@ -127,6 +155,10 @@ func GetForecast(point *Point) (*Forecast, error) {
 //
 // TODO: return Error instead of error
 func GetForecastHourly(point *Point) (*Forecast, error) {
+	var nwsErr *Error
+	var expires time.Time
+	body := []byte{}
+
 	if point == nil {
 		return nil, fmt.Errorf("forecast hourly: point nil")
 	}
@@ -134,10 +166,14 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 		return nil, fmt.Errorf("forecast hourly: link empty")
 	}
 
-	// Get the hourly forecast.
-	body, nwsErr := get(point.Properties.ForecastHourly)
-	if nwsErr != nil {
-		return nil, fmt.Errorf("forecast hourly: %v", nwsErr)
+	if body = fhCache.Get(point.Properties.ForecastHourly); len(body) == 0 {
+		// Get the hourly forecast.
+		body, expires, nwsErr = get(point.Properties.ForecastHourly)
+		if nwsErr != nil {
+			return nil, fmt.Errorf("forecast hourly: %v", nwsErr)
+		}
+		// Cache it.
+		fhCache.Set(point.Properties.ForecastHourly, body, expires)
 	}
 
 	// Unmarshal.
@@ -153,13 +189,16 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 }
 
 // HTTP GET a NWS endpoint.
-func get(url string) ([]byte, *Error) {
+func get(url string) ([]byte, time.Time, *Error) {
+	// Default response expiration time
+	expires := time.Now()
+
 	tries := 5
 	retryDelay := 100 * time.Millisecond
 	for {
 		resp, err := client.Get(url)
 		if err != nil {
-			return nil, &Error{
+			return nil, expires, &Error{
 				Title:  fmt.Sprintf("http get failed: %v", url),
 				Type:   "http-get",
 				Status: 500,
@@ -179,7 +218,7 @@ func get(url string) ([]byte, *Error) {
 		// Parse response body.
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return nil, &Error{
+			return nil, expires, &Error{
 				Title:  fmt.Sprintf("parsing body: %v", url),
 				Type:   "response-body",
 				Status: 500,
@@ -192,16 +231,36 @@ func get(url string) ([]byte, *Error) {
 			nwsErr := Error{}
 			err := json.Unmarshal(body, &nwsErr)
 			if err != nil {
-				return nil, &Error{
+				return nil, expires, &Error{
 					Title:  fmt.Sprintf("json decode: %v", url),
 					Type:   "json-decode",
 					Status: 500,
 					Detail: err.Error(),
 				}
 			}
-			return nil, &nwsErr
+			return nil, expires, &nwsErr
+		}
+
+		// Parse expiration time of the response.
+		expiresHeader := resp.Header.Get("expires")
+		if len(expiresHeader) < 1 {
+			return nil, expires, &Error{
+				Title:  "expiration header empty",
+				Type:   "expiration-header",
+				Status: 500,
+				Detail: "response expiration header is empty",
+			}
+		}
+		expires, err := time.Parse(time.RFC1123, expiresHeader)
+		if err != nil {
+			return nil, expires, &Error{
+				Title:  "expiration header could not be parsed",
+				Type:   "expiration-header-parse-failed",
+				Status: 500,
+				Detail: err.Error(),
+			}
 		}
 		// Response OK.
-		return body, nil
+		return body, expires, nil
 	}
 }
