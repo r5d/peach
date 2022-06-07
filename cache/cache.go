@@ -8,7 +8,7 @@ import "time"
 
 // An item in the key-value cache store.
 type item struct {
-	value   string
+	value   []byte
 	expires time.Time // Time when the key-value expires
 }
 
@@ -29,7 +29,7 @@ func NewCache() *Cache {
 //
 // Cache.Get will return an empty string once `expires` is past the
 // current time.
-func (c *Cache) Set(key, value string, expires time.Time) {
+func (c *Cache) Set(key string, value []byte, expires time.Time) {
 	c.store[key] = item{
 		value:   value,
 		expires: expires,
@@ -38,17 +38,17 @@ func (c *Cache) Set(key, value string, expires time.Time) {
 
 // Get an (key,value) item from the cache store by key.
 //
-// An empty string will be returned when if the key does not exist or
+// An empty []byte will be returned when if the key does not exist or
 // if the item corresponding to the key has expired. An expired
 // (key,value) item will be removed from the cache store.
-func (c *Cache) Get(key string) string {
+func (c *Cache) Get(key string) []byte {
 	if _, ok := c.store[key]; !ok {
-		return ""
+		return []byte{}
 	}
 	// Check if the item expired.
 	if time.Until(c.store[key].expires).Seconds() < 0 {
 		delete(c.store, key)
-		return ""
+		return []byte{}
 	}
 	return c.store[key].value
 }

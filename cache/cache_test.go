@@ -4,6 +4,7 @@
 package cache
 
 import (
+	"bytes"
 	"testing"
 	"time"
 )
@@ -20,10 +21,10 @@ func TestNewCache(t *testing.T) {
 	}
 	// Try manually adding an item.
 	c.store["foo"] = item{
-		value:   "bar",
+		value:   []byte("bar"),
 		expires: time.Now().Add(time.Second * 10),
 	}
-	if c.store["foo"].value != "bar" {
+	if bytes.Compare(c.store["foo"].value, []byte("bar")) != 0 {
 		t.Errorf("cache.store['foo'] is not bar")
 		return
 	}
@@ -36,8 +37,8 @@ func TestCacheSet(t *testing.T) {
 		return
 	}
 	exp := time.Now().Add(time.Second * 10)
-	c.Set("foo", "bar", exp)
-	if c.store["foo"].value != "bar" {
+	c.Set("foo", []byte("bar"), exp)
+	if bytes.Compare(c.store["foo"].value, []byte("bar")) != 0 {
 		t.Errorf("cache.store['foo'] is not bar")
 		return
 	}
@@ -56,16 +57,16 @@ func TestCacheGet(t *testing.T) {
 
 	// Test 1
 	exp := time.Now().Add(time.Second * 10)
-	c.Set("foo", "bar", exp)
-	if c.Get("foo") != "bar" {
+	c.Set("foo", []byte("bar"), exp)
+	if bytes.Compare(c.Get("foo"), []byte("bar")) != 0 {
 		t.Errorf("cache.Get(foo) is not bar")
 		return
 	}
 
 	// Test 2
 	exp = time.Now().Add(time.Second * -10)
-	c.Set("sna", "fu", exp)
-	if c.Get("sna") != "" {
+	c.Set("sna", []byte("fu"), exp)
+	if bytes.Compare(c.Get("sna"), []byte{}) != 0 {
 		t.Errorf("cache.Get(sna) is not empty: %s", c.Get("sna"))
 		return
 	}
