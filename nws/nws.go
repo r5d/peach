@@ -80,6 +80,15 @@ func (e Error) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
+func CacheWeather(lat, lng float32) {
+	p, err := Points(lat, lng)
+	if err != nil {
+		return
+	}
+	GetForecast(p)
+	GetForecastHourly(p)
+}
+
 // NWS `/points` endpoint.
 //
 // TODO: return Error instead of error
