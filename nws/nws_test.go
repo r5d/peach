@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 func TestPoints(t *testing.T) {
@@ -158,6 +159,11 @@ func TestNWSGetWrapper(t *testing.T) {
 			http.Error(w, `{"type":"urn:noaa:nws:api:UnexpectedProblem","title":"Unexpected Problem","status":500,"detail":"An unexpected problem has occurred.","instance":"urn:noaa:nws:api:request:493c3a1d-f87e-407f-ae2c-24483f5aab63","correlationId":"493c3a1d-f87e-407f-ae2c-24483f5aab63","additionalProp1":{}}`, 500)
 			return
 		}
+
+		// Add expires header.
+		w.Header().Set("expires",
+			time.Now().Add(time.Second*60).Format(time.RFC1123))
+
 		// Success.
 		fmt.Fprintln(w, `{"@context":[],"properties":{"gridId":"CLE","gridX":82,"gridY":64,"forecast":"https://api.weather.gov/gridpoints/CLE/82,64/forecast","forecastHourly":"https://api.weather.gov/gridpoints/CLE/82,64/forecast/hourly","relativeLocation":{"properties":{"city":"Cleveland","state":"OH"}}}}`)
 	}))
@@ -165,7 +171,7 @@ func TestNWSGetWrapper(t *testing.T) {
 
 	// Test 1 - Server fails 5 times.
 	fails = 5
-	_, err := get(ts.URL)
+	_, _, err := get(ts.URL)
 	if err != nil {
 		t.Errorf("get failed: %v", err)
 		return
@@ -173,7 +179,7 @@ func TestNWSGetWrapper(t *testing.T) {
 
 	// Test 2 - Server fails 6 times.
 	fails = 6
-	respBody, err := get(ts.URL)
+	respBody, _, err := get(ts.URL)
 	if err == nil {
 		t.Errorf("get did not fail: %s", respBody)
 		return
@@ -200,13 +206,17 @@ func TestNWSGetWrapper(t *testing.T) {
 
 	// Test 3 - Server fails 1 time.
 	fails = 1
-	respBody, err = get(ts.URL)
+	respBody, expires, err := get(ts.URL)
 	if err != nil {
 		t.Errorf("get failed: %v", err)
 		return
 	}
 	if respBody == nil {
 		t.Errorf("body: %s", respBody)
+		return
+	}
+	if time.Until(expires).Seconds() < 1 {
+		t.Errorf("points: expires in not in the future")
 		return
 	}
 	point := new(Point)
