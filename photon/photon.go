@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"ricketyspace.net/peach/client"
+	"ricketyspace.net/peach/nws"
 )
 
 // Coordinates.
@@ -129,6 +130,7 @@ func Geocode(location string) ([]Coordinates, error) {
 		names[c.Name] = true
 
 		mCoords = append(mCoords, c)
+		go nws.CacheWeather(c.Lat, c.Lng)
 	}
 	return mCoords, nil
 }
