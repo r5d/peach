@@ -83,6 +83,7 @@ func Geocode(location string) ([]Coordinates, error) {
 	q.Add("q", location)
 	q.Add("osm_tag", "place:city")
 	q.Add("osm_tag", "place:town")
+	q.Add("osm_tag", "place:village")
 	q.Add("limit", "10")
 	u.RawQuery = q.Encode()
 
