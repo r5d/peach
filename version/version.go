@@ -4,4 +4,4 @@
 // Peach version.
 package version
 
-const Version = "0.3.1.dev2"
+const Version = "0.4.0"
