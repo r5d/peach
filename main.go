@@ -122,26 +122,15 @@ func main() {
 }
 
 func showWeather(w http.ResponseWriter, lat, lng float32) {
-	point, err := nws.Points(lat, lng)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-
-	// Get forecast
-	f, err := nws.GetForecast(point)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
-	}
-	fh, err := nws.GetForecastHourly(point)
-	if err != nil {
-		http.Error(w, err.Error(), 500)
-		return
+	forecastBundle, nwsErr := nws.GetForecastBundle(lat, lng)
+	if nwsErr != nil {
+		http.Error(w, nwsErr.Error(), nwsErr.Status)
 	}
 
 	// Make weather
-	weather, err := NewWeather(point, f, fh)
+	weather, err := NewWeather(forecastBundle.Point,
+		forecastBundle.Forecast,
+		forecastBundle.ForecastHourly)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
