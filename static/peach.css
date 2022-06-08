@@ -118,6 +118,13 @@ body {
     justify-content: center;
 }
 
+
+@media (max-width: 440px)  {
+    .bd-timeline-container {
+	padding: 0 15px;
+    }
+}
+
 .bd-timeline-container .periods-container {
     width: 440px;
     display: flex;
