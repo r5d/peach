@@ -66,6 +66,13 @@ type Error struct {
 	Detail string
 }
 
+// NWS Forecast bundle.
+type ForecastBundle struct {
+	Point          *Point
+	Forecast       *Forecast
+	ForecastHourly *Forecast
+}
+
 var pCache *cache.Cache
 var fCache *cache.Cache
 var fhCache *cache.Cache
@@ -80,13 +87,40 @@ func (e Error) Error() string {
 	return fmt.Sprintf("%d: %s: %s", e.Status, e.Type, e.Detail)
 }
 
-func CacheWeather(lat, lng float32) {
+// Gets NWS's forecast and hourly forecast.
+func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 	p, err := Points(lat, lng)
 	if err != nil {
-		return
+		return nil, &Error{
+			Title:  "unable get points",
+			Type:   "points-failed",
+			Status: 500,
+			Detail: err.Error(),
+		}
 	}
-	GetForecast(p)
-	GetForecastHourly(p)
+	f, err := GetForecast(p)
+	if err != nil {
+		return nil, &Error{
+			Title:  "unable get forecast",
+			Type:   "forecast-failed",
+			Status: 500,
+			Detail: err.Error(),
+		}
+	}
+	fh, err := GetForecastHourly(p)
+	if err != nil {
+		return nil, &Error{
+			Title:  "unable get hourly forecast",
+			Type:   "forecast-hourly-failed",
+			Status: 500,
+			Detail: err.Error(),
+		}
+	}
+	return &ForecastBundle{
+		Point:          p,
+		Forecast:       f,
+		ForecastHourly: fh,
+	}, nil
 }
 
 // NWS `/points` endpoint.

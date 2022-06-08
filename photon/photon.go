@@ -131,7 +131,7 @@ func Geocode(location string) ([]Coordinates, error) {
 		names[c.Name] = true
 
 		mCoords = append(mCoords, c)
-		go nws.CacheWeather(c.Lat, c.Lng)
+		go nws.GetForecastBundle(c.Lat, c.Lng)
 	}
 	return mCoords, nil
 }
