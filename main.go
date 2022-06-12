@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"ricketyspace.net/peach/photon"
 	"ricketyspace.net/peach/search"
 	"ricketyspace.net/peach/version"
 	"ricketyspace.net/peach/weather"
@@ -102,15 +101,13 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 func showSearch(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
 
-	// Search is disabled if photon is not enabled.
-	if !photon.Enabled() {
+	search, err, status := search.NewSearch(r)
+	if err != nil && status == 404 {
 		http.NotFound(w, r)
 		return
 	}
-
-	search, err := search.NewSearch(r)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), status)
 		return
 	}
 	err = peachTemplates.ExecuteTemplate(w, "search.tmpl", search)
