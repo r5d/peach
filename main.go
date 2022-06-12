@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"ricketyspace.net/peach/photon"
+	"ricketyspace.net/peach/search"
 	"ricketyspace.net/peach/version"
 	"ricketyspace.net/peach/weather"
 )
@@ -34,14 +34,6 @@ var peachTemplates = template.Must(template.ParseFS(peachFS, "templates/*.tmpl")
 
 // Lat,Long regex.
 var latLngRegex = regexp.MustCompile(`/(-?[0-9]+\.?[0-9]+?),(-?[0-9]+\.?[0-9]+)`)
-
-type Search struct {
-	Title          string
-	Version        string
-	Location       string
-	Message        string
-	MatchingCoords []photon.Coordinates
-}
 
 func init() {
 	flag.Parse()
@@ -116,7 +108,7 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	search, err := NewSearch(r)
+	search, err := search.NewSearch(r)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
 		return
@@ -137,40 +129,6 @@ func serveStaticFile(w http.ResponseWriter, r *http.Request) {
 	// Serve.
 	server := http.FileServer(http.FS(peachFS))
 	server.ServeHTTP(w, r)
-}
-
-func NewSearch(r *http.Request) (*Search, error) {
-	s := new(Search)
-	s.Title = "search"
-	s.Version = version.Version
-
-	if r.Method == "GET" {
-		return s, nil
-	}
-
-	// Get location.
-	err := r.ParseForm()
-	if err != nil {
-		return s, fmt.Errorf("form: %v", err)
-	}
-	location := strings.TrimSpace(r.PostForm.Get("location"))
-	s.Location = location
-	if len(location) < 2 {
-		s.Message = "location invalid"
-	}
-
-	// Try to fetch matching coordinates.
-	s.MatchingCoords, err = photon.Geocode(location)
-	if err != nil {
-		log.Printf("search: geocode: %v", err)
-		s.Message = "unable to lookup location"
-		return s, nil
-	}
-	if len(s.MatchingCoords) < 1 {
-		s.Message = "location not found"
-		return s, nil
-	}
-	return s, nil
 }
 
 func logRequest(r *http.Request) {
