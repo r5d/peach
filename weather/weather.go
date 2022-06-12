@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"ricketyspace.net/peach/nws"
+	"ricketyspace.net/peach/photon"
 	"ricketyspace.net/peach/version"
 )
 
@@ -19,6 +20,7 @@ type Weather struct {
 	Now             WeatherNow
 	Q2HTimeline     WeatherTimeline // Q2H forecast of the next 12 hours.
 	BiDailyTimeline WeatherTimeline // BiDaily forecast for the next 3 days.
+	SearchEnabled   bool
 }
 
 type WeatherNow struct {
@@ -106,6 +108,7 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 	w.BiDailyTimeline = WeatherTimeline{
 		Periods: bdPeriods,
 	}
+	w.SearchEnabled = photon.Enabled()
 
 	return w, nil, 200
 }
