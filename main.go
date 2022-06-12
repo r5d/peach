@@ -14,7 +14,6 @@ import (
 	"strconv"
 	"strings"
 
-	"ricketyspace.net/peach/nws"
 	"ricketyspace.net/peach/photon"
 	"ricketyspace.net/peach/version"
 	"ricketyspace.net/peach/weather"
@@ -93,17 +92,10 @@ func main() {
 }
 
 func showWeather(w http.ResponseWriter, lat, lng float32) {
-	forecastBundle, nwsErr := nws.GetForecastBundle(lat, lng)
-	if nwsErr != nil {
-		http.Error(w, nwsErr.Error(), nwsErr.Status)
-	}
-
 	// Make weather
-	weather, err := weather.NewWeather(forecastBundle.Point,
-		forecastBundle.Forecast,
-		forecastBundle.ForecastHourly)
+	weather, err, status := weather.NewWeather(lat, lng)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), status)
 		return
 	}
 

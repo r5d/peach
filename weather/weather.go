@@ -41,32 +41,37 @@ type WeatherTimeline struct {
 	Periods []WeatherPeriod
 }
 
-func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
+func NewWeather(lat, lng float32) (*Weather, error, int) {
+	fBundle, nwsErr := nws.GetForecastBundle(lat, lng)
+	if nwsErr != nil {
+		return nil, nwsErr, nwsErr.Status
+	}
+
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
-		strings.ToLower(point.Properties.RelativeLocation.Properties.City),
-		strings.ToLower(point.Properties.RelativeLocation.Properties.State),
+		strings.ToLower(fBundle.Point.Properties.RelativeLocation.Properties.City),
+		strings.ToLower(fBundle.Point.Properties.RelativeLocation.Properties.State),
 	)
 	w.Title = w.Location
 	w.Version = version.Version
 	w.Now = WeatherNow{
-		Temperature:     fh.Properties.Periods[0].Temperature,
-		TemperatureUnit: fh.Properties.Periods[0].TemperatureUnit,
-		Forecast:        fh.Properties.Periods[0].ShortForecast,
-		WindSpeed:       fh.Properties.Periods[0].WindSpeed,
-		WindDirection:   fh.Properties.Periods[0].WindDirection,
+		Temperature:     fBundle.ForecastHourly.Properties.Periods[0].Temperature,
+		TemperatureUnit: fBundle.ForecastHourly.Properties.Periods[0].TemperatureUnit,
+		Forecast:        fBundle.ForecastHourly.Properties.Periods[0].ShortForecast,
+		WindSpeed:       fBundle.ForecastHourly.Properties.Periods[0].WindSpeed,
+		WindDirection:   fBundle.ForecastHourly.Properties.Periods[0].WindDirection,
 	}
 
 	// Build Q2H timeline for the 12 hours.
 	q2hPeriods := []WeatherPeriod{}
 	max := 6
-	for i, period := range fh.Properties.Periods {
+	for i, period := range fBundle.ForecastHourly.Properties.Periods {
 		if i%2 != 0 {
 			continue // Take every other period
 		}
 		t, err := time.Parse(time.RFC3339, period.StartTime)
 		if err != nil {
-			return nil, err
+			return nil, err, 500
 		}
 		p := WeatherPeriod{
 			Forecast:        period.DetailedForecast,
@@ -86,7 +91,7 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 	// Build BiDaily  timeline for the next 3 days.
 	bdPeriods := []WeatherPeriod{}
 	max = 8
-	for _, period := range f.Properties.Periods {
+	for _, period := range fBundle.Forecast.Properties.Periods {
 		p := WeatherPeriod{
 			Name:            period.Name,
 			Forecast:        period.DetailedForecast,
@@ -102,5 +107,5 @@ func NewWeather(point *nws.Point, f, fh *nws.Forecast) (*Weather, error) {
 		Periods: bdPeriods,
 	}
 
-	return w, nil
+	return w, nil, 200
 }
