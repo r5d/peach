@@ -9,7 +9,7 @@ A [weather site][peach].
 Build requirements:
 
  - make
- - go version 16 or higher
+ - go version 18 or higher
 
 To build the peach binary, just do:
 
