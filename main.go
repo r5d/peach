@@ -43,43 +43,45 @@ func init() {
 }
 
 func main() {
-	// Search handler.
-	http.HandleFunc("/search", showSearch)
-
 	// Default handler.
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		logRequest(r)
-
-		if r.URL.Path == "/" {
-			http.Redirect(w, r, "/41.115,-83.177", 302)
-			return
-		}
-		if r.URL.Path == "/version" {
-			fmt.Fprintf(w, "v%s\n", version.Version)
-			return
-		}
-
-		m := latLngRegex.FindStringSubmatch(r.URL.Path)
-		if len(m) != 3 || m[0] != r.URL.Path {
-			http.NotFound(w, r)
-			return
-		}
-		lat, err := strconv.ParseFloat(m[1], 32)
-		if err != nil {
-			http.Error(w, err.Error(), 400)
-		}
-		lng, err := strconv.ParseFloat(m[2], 32)
-		if err != nil {
-			http.Error(w, err.Error(), 400)
-		}
-		showWeather(w, float32(lat), float32(lng))
-	})
+	http.HandleFunc("/", defaultHandler)
 
 	// Static files handler.
 	http.HandleFunc("/static/", serveStaticFile)
 
+	// Search handler.
+	http.HandleFunc("/search", showSearch)
+
 	// Start server
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
+}
+
+func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+
+	if r.URL.Path == "/" {
+		http.Redirect(w, r, "/41.115,-83.177", 302)
+		return
+	}
+	if r.URL.Path == "/version" {
+		fmt.Fprintf(w, "v%s\n", version.Version)
+		return
+	}
+
+	m := latLngRegex.FindStringSubmatch(r.URL.Path)
+	if len(m) != 3 || m[0] != r.URL.Path {
+		http.NotFound(w, r)
+		return
+	}
+	lat, err := strconv.ParseFloat(m[1], 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+	}
+	lng, err := strconv.ParseFloat(m[2], 32)
+	if err != nil {
+		http.Error(w, err.Error(), 400)
+	}
+	showWeather(w, float32(lat), float32(lng))
 }
 
 func showWeather(w http.ResponseWriter, lat, lng float32) {
