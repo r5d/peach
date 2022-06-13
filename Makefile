@@ -5,7 +5,7 @@ MOD=ricketyspace.net/peach
 PKGS=${MOD}/cache ${MOD}/client ${MOD}/nws ${MOD}/photon
 CSS=static/peach.min.css
 
-peach: fix fmt ${CSS}
+peach: vet fix fmt ${CSS}
 	go build ${BUILD_OPTS}
 
 fmt:
@@ -15,6 +15,10 @@ fmt:
 fix:
 	go fix ${MOD} ${PKGS}
 .PHONY: fix
+
+vet:
+	go vet ${MOD} ${PKGS}
+.PHONY: vet
 
 test:
 	go test ${PKGS} ${ARGS}
