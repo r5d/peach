@@ -100,6 +100,17 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 	}
 }
 
+func serveStaticFile(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+
+	// Add Cache-Control header
+	w.Header().Set("Cache-Control", "max-age=604800")
+
+	// Serve.
+	server := http.FileServer(http.FS(peachFS))
+	server.ServeHTTP(w, r)
+}
+
 func showSearch(w http.ResponseWriter, r *http.Request) {
 	logRequest(r)
 
@@ -117,17 +128,6 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 		log.Printf("search: template: %v", err)
 		return
 	}
-}
-
-func serveStaticFile(w http.ResponseWriter, r *http.Request) {
-	logRequest(r)
-
-	// Add Cache-Control header
-	w.Header().Set("Cache-Control", "max-age=604800")
-
-	// Serve.
-	server := http.FileServer(http.FS(peachFS))
-	server.ServeHTTP(w, r)
 }
 
 func logRequest(r *http.Request) {
