@@ -242,3 +242,11 @@ func TestNWSGetWrapper(t *testing.T) {
 		return
 	}
 }
+
+func TestAlerts(t *testing.T) {
+	_, err := GetAlerts(33.2938, -83.9674)
+	if err != nil {
+		t.Errorf("alerts: %v", err)
+		return
+	}
+}

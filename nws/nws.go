@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"time"
 
 	"ricketyspace.net/peach/cache"
@@ -59,6 +60,21 @@ type Forecast struct {
 	Properties ForecastProperties
 }
 
+type FeatureProperties struct {
+	Event       string
+	Severity    string
+	Description string
+	Instruction string
+}
+
+type Feature struct {
+	Properties FeatureProperties
+}
+
+type FeatureCollection struct {
+	Features []Feature
+}
+
 type Error struct {
 	Title  string
 	Type   string
@@ -76,11 +92,20 @@ type ForecastBundle struct {
 var pCache *cache.Cache
 var fCache *cache.Cache
 var fhCache *cache.Cache
+var baseUrl *url.URL
 
 func init() {
+	var err error
+
 	pCache = cache.NewCache()
 	fCache = cache.NewCache()
 	fhCache = cache.NewCache()
+
+	// Parse NWS base url.
+	baseUrl, err = url.Parse("https://api.weather.gov")
+	if err != nil {
+		panic(`url parse: nws base url: ` + err.Error())
+	}
 }
 
 func (e Error) Error() string {
@@ -229,6 +254,50 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 		return nil, fmt.Errorf("forecast hourly: periods empty")
 	}
 	return forecast, nil
+}
+
+// NWS active alerts endpoint.
+func GetAlerts(lat, lng float32) (fc *FeatureCollection, err *Error) {
+	// Alerts endpoint.
+	u, uErr := baseUrl.Parse("/alerts/active")
+	if uErr != nil {
+		err = &Error{
+			Title:  "alerts url parsing failed",
+			Type:   "url-parse-error",
+			Status: 500,
+			Detail: uErr.Error(),
+		}
+		return
+	}
+
+	// Build query.
+	q := url.Values{}
+	q.Add("status", "actual")
+	q.Add("message_type", "alert")
+	q.Add("point", fmt.Sprintf("%.4f,%.4f", lat, lng))
+	q.Add("urgency", "Immediate,Expected")
+	q.Add("certainty", "Observed,Likely,Possible")
+	u.RawQuery = q.Encode()
+
+	// Hit it.
+	body, _, err := get(u.String())
+	if err != nil {
+		return
+	}
+
+	// Unmarshal.
+	fc = new(FeatureCollection)
+	jErr := json.Unmarshal(body, fc)
+	if jErr != nil {
+		err = &Error{
+			Title:  "feature collection decode failed",
+			Type:   "json-decode-error",
+			Status: 500,
+			Detail: jErr.Error(),
+		}
+		return
+	}
+	return
 }
 
 // HTTP GET a NWS endpoint.
