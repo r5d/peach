@@ -87,6 +87,7 @@ type ForecastBundle struct {
 	Point          *Point
 	Forecast       *Forecast
 	ForecastHourly *Forecast
+	Alerts         *FeatureCollection
 }
 
 var pCache *cache.Cache
@@ -143,10 +144,15 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 			Detail: err.Error(),
 		}
 	}
+	a, nwsErr := GetAlerts(lat, lng)
+	if nwsErr != nil {
+		return nil, nwsErr
+	}
 	return &ForecastBundle{
 		Point:          p,
 		Forecast:       f,
 		ForecastHourly: fh,
+		Alerts:         a,
 	}, nil
 }
 
