@@ -47,8 +47,8 @@ type WeatherTimeline struct {
 type Alert struct {
 	Event       string
 	Severity    string
-	Description string
-	Instruction string
+	Description []string
+	Instruction []string
 }
 
 func NewWeather(lat, lng float32) (*Weather, error, int) {
@@ -125,12 +125,11 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 			a := Alert{
 				Event:       f.Properties.Event,
 				Severity:    f.Properties.Severity,
-				Description: f.Properties.Description,
-				Instruction: f.Properties.Instruction,
+				Description: strings.Split(f.Properties.Description, "\n\n"),
+				Instruction: strings.Split(f.Properties.Instruction, "\n\n"),
 			}
 			w.Alerts = append(w.Alerts, a)
 		}
 	}
-
 	return w, nil, 200
 }
