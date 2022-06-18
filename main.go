@@ -61,8 +61,6 @@ func main() {
 }
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
-	logRequest(r)
-
 	if r.URL.Path == "/" {
 		http.Redirect(w, r, "/41.115,-83.177", 302)
 		return
@@ -105,8 +103,6 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 }
 
 func showMeta(w http.ResponseWriter, r *http.Request) {
-	logRequest(r)
-
 	// Make meta info.
 	meta := meta.NewMeta()
 
@@ -119,8 +115,6 @@ func showMeta(w http.ResponseWriter, r *http.Request) {
 }
 
 func serveStaticFile(w http.ResponseWriter, r *http.Request) {
-	logRequest(r)
-
 	// Add Cache-Control header
 	w.Header().Set("Cache-Control", "max-age=604800")
 
@@ -130,8 +124,6 @@ func serveStaticFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func showSearch(w http.ResponseWriter, r *http.Request) {
-	logRequest(r)
-
 	search, err, status := search.NewSearch(r)
 	if err != nil && status == 404 {
 		http.NotFound(w, r)
@@ -146,12 +138,4 @@ func showSearch(w http.ResponseWriter, r *http.Request) {
 		log.Printf("search: template: %v", err)
 		return
 	}
-}
-
-func logRequest(r *http.Request) {
-	addr := r.RemoteAddr
-	if len(r.Header.Get("X-Forwarded-For")) > 0 {
-		addr = r.Header.Get("X-Forwarded-For")
-	}
-	log.Printf("%v - %v - %v", addr, r.URL, r.Header.Get("User-agent"))
 }
