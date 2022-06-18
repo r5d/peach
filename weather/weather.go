@@ -21,6 +21,7 @@ type Weather struct {
 	Q2HTimeline     WeatherTimeline // Q2H forecast of the next 12 hours.
 	BiDailyTimeline WeatherTimeline // BiDaily forecast for the next 3 days.
 	SearchEnabled   bool
+	Alerts          []Alert
 }
 
 type WeatherNow struct {
@@ -41,6 +42,13 @@ type WeatherPeriod struct {
 
 type WeatherTimeline struct {
 	Periods []WeatherPeriod
+}
+
+type Alert struct {
+	Event       string
+	Severity    string
+	Description string
+	Instruction string
 }
 
 func NewWeather(lat, lng float32) (*Weather, error, int) {
@@ -109,6 +117,20 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 		Periods: bdPeriods,
 	}
 	w.SearchEnabled = photon.Enabled()
+
+	// Add alerts if they exist.
+	if len(fBundle.Alerts.Features) > 0 {
+		w.Alerts = make([]Alert, 0)
+		for _, f := range fBundle.Alerts.Features {
+			a := Alert{
+				Event:       f.Properties.Event,
+				Severity:    f.Properties.Severity,
+				Description: f.Properties.Description,
+				Instruction: f.Properties.Instruction,
+			}
+			w.Alerts = append(w.Alerts, a)
+		}
+	}
 
 	return w, nil, 200
 }
