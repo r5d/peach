@@ -62,6 +62,35 @@
 				{{ end }}
 
 
+				{{ if .Alerts }}
+				<div class="alerts-container">
+					{{ range .Alerts }}
+					<div class="alert-container">
+						<div class="alert-header">
+							<div class="event-name">
+								<span>{{ .Event }}</span>
+							</div>
+						</div>
+						<div class="alert-body">
+							<div class="severity">
+								<p>Severity &mdash; {{ .Severity }}</p>
+							</div>
+							<div class="description">
+								{{ range $p := .Description }}
+								<p>{{ $p }}</p>
+								{{ end }}
+							</div>
+							<div class="instruction">
+								{{ range $p := .Instruction }}
+								<p>{{ $p }}</p>
+								{{ end }}
+							</div>
+						</div>
+					</div>
+					{{ end }}
+				</div>
+				{{ end }}
+
 				{{ if .BiDailyTimeline }}
 				<div class="bd-timeline-container">
 					<div class="periods-container">
