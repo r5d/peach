@@ -92,6 +92,7 @@ type ForecastBundle struct {
 var pCache *cache.Cache
 var fCache *cache.Cache
 var fhCache *cache.Cache
+var aCache *cache.Cache
 var baseUrl *url.URL
 
 func init() {
@@ -100,6 +101,7 @@ func init() {
 	pCache = cache.NewCache()
 	fCache = cache.NewCache()
 	fhCache = cache.NewCache()
+	aCache = cache.NewCache()
 
 	// Parse NWS base url.
 	baseUrl, err = url.Parse("https://api.weather.gov")
@@ -270,19 +272,28 @@ func GetAlerts(lat, lng float32) (fc *FeatureCollection, err *Error) {
 		return
 	}
 
+	// Point: lat,lng.
+	ll := fmt.Sprintf("%.4f,%.4f", lat, lng)
+
 	// Build query.
 	q := url.Values{}
 	q.Add("status", "actual")
 	q.Add("message_type", "alert")
-	q.Add("point", fmt.Sprintf("%.4f,%.4f", lat, lng))
+	q.Add("point", ll)
 	q.Add("urgency", "Immediate,Expected")
 	q.Add("certainty", "Observed,Likely,Possible")
 	u.RawQuery = q.Encode()
 
 	// Hit it.
-	body, _, err := get(u.String())
-	if err != nil {
-		return
+	var expires time.Time
+	var body []byte
+	if body = aCache.Get(ll); len(body) == 0 {
+		body, expires, err = get(u.String())
+		if err != nil {
+			return
+		}
+		// Cache it.
+		aCache.Set(ll, body, expires)
 	}
 
 	// Unmarshal.
