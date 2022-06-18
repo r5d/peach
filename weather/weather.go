@@ -121,7 +121,11 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 	// Add alerts if they exist.
 	if len(fBundle.Alerts.Features) > 0 {
 		w.Alerts = make([]Alert, 0)
+		am := make(map[string]bool, 0) // Alerts map.
 		for _, f := range fBundle.Alerts.Features {
+			if _, ok := am[f.Id]; ok {
+				continue // Duplicate; skip.
+			}
 			a := Alert{
 				Event:       f.Properties.Event,
 				Severity:    f.Properties.Severity,
@@ -129,6 +133,7 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 				Instruction: strings.Split(f.Properties.Instruction, "\n\n"),
 			}
 			w.Alerts = append(w.Alerts, a)
+			am[f.Id] = true
 		}
 	}
 	return w, nil, 200

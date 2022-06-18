@@ -68,6 +68,7 @@ type FeatureProperties struct {
 }
 
 type Feature struct {
+	Id         string
 	Properties FeatureProperties
 }
 
