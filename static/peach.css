@@ -333,10 +333,17 @@ body {
 
 .about-container .header {
     font-size: 1.5em;
+    display: flex;
+    flex-direction: column;
 }
 
 .about-container .header h1 {
-    margin: 5px 0 15px;
+    margin: 5px 0 0px;
+}
+
+.about-container .header p {
+    font-size: 0.5em;
+    margin: 0;
 }
 
 .terms-container .header,
