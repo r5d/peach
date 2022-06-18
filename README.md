@@ -1,6 +1,9 @@
 # peach
 
-A [weather site][peach].
+A barebones [weather service][peach].
+
+My knee-jerk reaction after darksky.net announced that they will be
+shutting down.
 
 [peach]: https://peach.ricketyspace.net
 
