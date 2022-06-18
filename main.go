@@ -13,6 +13,7 @@ import (
 	"regexp"
 	"strconv"
 
+	"ricketyspace.net/peach/meta"
 	"ricketyspace.net/peach/search"
 	"ricketyspace.net/peach/version"
 	"ricketyspace.net/peach/weather"
@@ -51,6 +52,9 @@ func main() {
 
 	// Search handler.
 	http.HandleFunc("/search", showSearch)
+
+	// Meta handler.
+	http.HandleFunc("/about", showMeta)
 
 	// Start server
 	log.Fatal(http.ListenAndServe(peachAddr, nil))
@@ -94,6 +98,20 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 
 	// Render.
 	err = peachTemplates.ExecuteTemplate(w, "weather.tmpl", weather)
+	if err != nil {
+		log.Printf("weather: template: %v", err)
+		return
+	}
+}
+
+func showMeta(w http.ResponseWriter, r *http.Request) {
+	logRequest(r)
+
+	// Make meta info.
+	meta := meta.NewMeta()
+
+	// Render.
+	err := peachTemplates.ExecuteTemplate(w, "about.tmpl", meta)
 	if err != nil {
 		log.Printf("weather: template: %v", err)
 		return

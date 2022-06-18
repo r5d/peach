@@ -48,7 +48,7 @@ body {
     margin: 0;
 }
 
-.header {
+.header-container .header {
     margin-top: 10px;
     margin-bottom: 0px;
     font-size: 1.5em;
@@ -293,4 +293,58 @@ body {
 .search-result-container .location-name a:hover {
     transition: background-color 0.3s linear;
     background-color: rgb(245,245,245);
+}
+
+/** About **/
+.about-container,
+.terms-container,
+.privacy-container,
+.footer-container {
+    padding: 0 20px;
+}
+
+.about-container p,
+.terms-container p,
+.privacy-container p {
+    margin: 10px 0;
+    padding: 0 5px;
+    line-height: 25px;
+}
+
+.footer-container p {
+    margin: 1px 0;
+    padding: 0 5px;
+    line-height: 0px;
+    color: rgb(225,225,225);
+}
+
+.about-container a,
+.terms-container a,
+.privacy-container a {
+    text-decoration: none;
+    border-bottom: 2px solid rgb(0,0,0);
+    color: rgb(0,0,0);
+}
+
+.footer-container a {
+    text-decoration: none;
+    color: rgb(225,225,225);
+}
+
+.about-container .header {
+    font-size: 1.5em;
+}
+
+.about-container .header h1 {
+    margin: 5px; 0 15px;
+}
+
+.terms-container .header,
+.privacy-container .header {
+    font-size: 1.3em;
+}
+
+.terms-container .header h2,
+.privacy-container .header h2 {
+    margin: 0 0 10px;
 }
