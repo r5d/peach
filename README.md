@@ -1,6 +1,6 @@
 # peach
 
-A barebones [weather service][peach].
+Barebones [weather service][peach].
 
 [peach]: https://peach.ricketyspace.net
 
