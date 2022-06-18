@@ -298,8 +298,7 @@ body {
 /** About **/
 .about-container,
 .terms-container,
-.privacy-container,
-.footer-container {
+.privacy-container {
     padding: 0 20px;
 }
 
@@ -311,24 +310,12 @@ body {
     line-height: 25px;
 }
 
-.footer-container p {
-    margin: 1px 0;
-    padding: 0 5px;
-    line-height: 0px;
-    color: rgb(225,225,225);
-}
-
 .about-container a,
 .terms-container a,
 .privacy-container a {
     text-decoration: none;
     border-bottom: 2px solid rgb(0,0,0);
     color: rgb(0,0,0);
-}
-
-.footer-container a {
-    text-decoration: none;
-    color: rgb(225,225,225);
 }
 
 .about-container .header {
