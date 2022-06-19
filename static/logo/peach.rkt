@@ -50,5 +50,7 @@
     (png-export logo-bitmap size)))        ;Export logo to a PNG file.
 
 
-;; Make 500x500 logo.
-(make-logo 500)
+;; Make logos in different sizes.
+(begin
+  (let ((sizes '(16 32 48 58 76 80 87 114 120 152 167 120 180)))
+    (map make-logo sizes)))
