@@ -38,6 +38,14 @@
 (define (png-export logo size)
   (send logo save-file (format "peach-~s.png" size) 'png))
 
+
+;; Makes a sizexsize peach logo and exports it to a PNG.
+(define (make-logo size)
+  (let ((logo-bitmap (draw-logo size)))
+    (make-object image-snip% logo-bitmap)  ;Render logo in racket shell.
+    (png-export logo-bitmap size)))        ;Export logo to a PNG file.
+
+
 ;; Peach logo as a bitmap.
 (define peach-logo (draw-logo 500))
 
