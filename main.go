@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strconv"
 
-	"ricketyspace.net/peach/meta"
 	"ricketyspace.net/peach/search"
 	"ricketyspace.net/peach/version"
 	"ricketyspace.net/peach/weather"
@@ -106,10 +105,16 @@ func showWeather(w http.ResponseWriter, lat, lng float32) {
 
 func showMeta(w http.ResponseWriter, r *http.Request) {
 	// Make meta info.
-	meta := meta.NewMeta()
+	type Meta struct {
+		Version string
+		Title   string
+	}
+	m := new(Meta)
+	m.Version = version.Version
+	m.Title = "about"
 
 	// Render.
-	err := peachTemplates.ExecuteTemplate(w, "about.tmpl", meta)
+	err := peachTemplates.ExecuteTemplate(w, "about.tmpl", m)
 	if err != nil {
 		log.Printf("weather: template: %v", err)
 		return
