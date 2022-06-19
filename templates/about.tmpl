@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<meta charset="UTF-8">
-		<title>peach - about</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="author" content="siddharth ravikumar">
-		<link rel="preload" href="/static/peach.min.css?{{ .Version }}" as="style" />
-		<style>@import url("/static/peach.min.css?{{ .Version }}");</style>
+		{{ template "head.tmpl" . }}
 	</head>
 	<body>
 		<div class="peach">
