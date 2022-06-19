@@ -50,13 +50,5 @@
     (png-export logo-bitmap size)))        ;Export logo to a PNG file.
 
 
-;; Peach logo as a bitmap.
-(define peach-logo (draw-logo 500))
-
-
-;; Render logo in racket shell.
-(make-object image-snip% peach-logo)
-
-
-;; Export logo to a PNG file.
-(png-export peach-logo 500)
+;; Make 500x500 logo.
+(make-logo 500)
