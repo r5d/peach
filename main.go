@@ -28,7 +28,7 @@ var peachAddr = ""
 // Holds static content.
 //go:embed templates static/peach.min.css
 //go:embed static/font/roboto-flex.ttf
-//go:embed static/logo/peach.png
+//go:embed static/logo/peach-*.png
 var peachFS embed.FS
 
 // HTML templates.
