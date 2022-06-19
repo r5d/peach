@@ -35,8 +35,8 @@
     target))
 
 ;; Exports the logo into PNG.
-(define (png-export logo)
-  (send logo save-file "peach.png" 'png))
+(define (png-export logo size)
+  (send logo save-file (format "peach-~s.png" size) 'png))
 
 ;; Peach logo as a bitmap.
 (define peach-logo (draw-logo 500))
@@ -45,4 +45,4 @@
 (make-object image-snip% peach-logo)
 
 ;; Export logo to a PNG file.
-(png-export peach-logo)
+(png-export peach-logo 500)
