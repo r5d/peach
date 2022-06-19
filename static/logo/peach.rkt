@@ -6,11 +6,13 @@
 (require racket/draw)
 (require racket/snip)
 
+
 ;; Sets up settings for the drawing context.
 (define (setup-dc dc)
   (send dc set-smoothing 'aligned)
   (send dc set-pen "black" 1 'transparent)
   (send dc set-brush "black" 'solid))
+
 
 ;; Draws a moon.
 (define (moon-drawing size)
@@ -25,6 +27,7 @@
     (send moon arc outer-arc-x outer-arc-y outer-arc-size outer-arc-size 3.54 2.20 #t)
     moon))
 
+
 ;; Draws the peach logo in a bitmap and returns the bitmap.
 (define (draw-logo size)
   (let* ((target (make-bitmap size size))
@@ -33,6 +36,7 @@
     (send dc set-brush "black" 'solid)
     (send dc draw-path (moon-drawing size))
     target))
+
 
 ;; Exports the logo into PNG.
 (define (png-export logo size)
@@ -49,8 +53,10 @@
 ;; Peach logo as a bitmap.
 (define peach-logo (draw-logo 500))
 
+
 ;; Render logo in racket shell.
 (make-object image-snip% peach-logo)
+
 
 ;; Export logo to a PNG file.
 (png-export peach-logo 500)
