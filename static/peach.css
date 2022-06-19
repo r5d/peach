@@ -347,6 +347,7 @@ body {
 .footer-container .footer {
     display: flex;
     justify-content: center;
+    padding: 10px 0 10px 0;
 }
 
 .footer-container .footer .logo-container img {
