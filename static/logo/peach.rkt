@@ -29,7 +29,7 @@
 
 ;; Exports the logo into PNG.
 (define (png-export logo)
-  (send logo save-file "logo.png" 'png))
+  (send logo save-file "peach.png" 'png))
 
 ;; Peach logo as a bitmap.
 (define peach-logo (draw-logo))
