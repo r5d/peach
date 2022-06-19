@@ -342,3 +342,13 @@ body {
 .privacy-container .header h2 {
     margin: 0 0 10px;
 }
+
+/** Footer **/
+.footer-container .footer {
+    display: flex;
+    justify-content: center;
+}
+
+.footer-container .footer .logo-container img {
+    width: 20px;
+}
