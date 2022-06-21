@@ -75,11 +75,13 @@
 								<p>{{ $p }}</p>
 								{{ end }}
 							</div>
+							{{ if len .Instruction |  gt 0 }}
 							<div class="instruction">
 								{{ range $p := .Instruction }}
 								<p>{{ $p }}</p>
 								{{ end }}
 							</div>
+							{{ end }}
 						</div>
 					</div>
 					{{ end }}
