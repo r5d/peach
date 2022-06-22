@@ -40,7 +40,7 @@
 
 ;; Exports the logo into PNG.
 (define (png-export logo size)
-  (send logo save-file (format "peach-~s.png" size) 'png))
+  (send logo save-file (format "peach-v2-~s.png" size) 'png))
 
 
 ;; Makes a sizexsize peach logo and exports it to a PNG.
