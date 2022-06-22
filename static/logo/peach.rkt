@@ -19,12 +19,12 @@
   (let* ((moon (new dc-path%))
          (inner-arc-x (/ (* size -50) 500.0))
          (inner-arc-y (* -1 inner-arc-x))
-         (inner-arc-size (/ (* size 320) 500.0))
-         (outer-arc-x (/ (* size 5) 500.0))
-         (outer-arc-y outer-arc-x)
-         (outer-arc-size (/ (* size 490) 500.0)))
-    (send moon arc inner-arc-x inner-arc-y inner-arc-size inner-arc-size 1.57 4.36 #f)
-    (send moon arc outer-arc-x outer-arc-y outer-arc-size outer-arc-size 3.54 2.20 #t)
+         (inner-arc-size (/ (* size 345) 500.0))
+         (outer-arc-x (/ (* size 10) 500.0))
+         (outer-arc-y (/ (* size 46) 500.0))
+         (outer-arc-size (/ (* size 400) 500.0)))
+    (send moon arc inner-arc-x inner-arc-y inner-arc-size inner-arc-size 1.30 4.49 #f)
+    (send moon arc outer-arc-x outer-arc-y outer-arc-size outer-arc-size 3.91 1.85 #t)
     moon))
 
 
@@ -46,8 +46,8 @@
 ;; Makes a sizexsize peach logo and exports it to a PNG.
 (define (make-logo size)
   (let ((logo-bitmap (draw-logo size)))
-    (make-object image-snip% logo-bitmap)  ;Render logo in racket shell.
-    (png-export logo-bitmap size)))        ;Export logo to a PNG file.
+    (png-export logo-bitmap size)                 ;Export logo to a PNG file.
+    (make-object image-snip% logo-bitmap)))       ;Render logo in racket shell.
 
 
 ;; Make logos in different sizes.
