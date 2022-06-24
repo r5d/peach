@@ -26,5 +26,6 @@ func Get(url string) (*http.Response, error) {
 func buildHeaders(req *http.Request) *http.Request {
 	req.Header.Set("User-Agent", "peach/"+version.Version+
 		" peach.ricketyspace.net")
+	req.Header.Set("Cache-Control", "max-age=0")
 	return req
 }

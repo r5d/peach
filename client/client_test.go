@@ -4,12 +4,37 @@
 package client
 
 import (
+	"fmt"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	"ricketyspace.net/peach/version"
 )
 
 func TestGet(t *testing.T) {
-	res, err := Get("https://plan.cat/~s")
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Check user-agent header.
+		expectedUA := fmt.Sprintf("peach/%s peach.ricketyspace.net",
+			version.Version)
+		if r.Header.Get("User-Agent") != expectedUA {
+			t.Errorf("header: user agent: %v != %v",
+				r.Header.Get("User-Agent"), expectedUA)
+			return
+		}
+
+		// Check cache-control header.
+		if r.Header.Get("Cache-Control") != "max-age=0" {
+			t.Errorf("header: cache control: %v != max-age=0",
+				r.Header.Get("Cache-Control"))
+			return
+		}
+		fmt.Fprint(w, "OK")
+	}))
+	defer ts.Close()
+
+	res, err := Get(ts.URL)
 	if err != nil {
 		t.Errorf("get failed: %v", err)
 		return
