@@ -30,6 +30,13 @@ func TestGet(t *testing.T) {
 				r.Header.Get("Cache-Control"))
 			return
 		}
+
+		// Check accept header.
+		if r.Header.Get("Accept") != "application/geo+json" {
+			t.Errorf("header: accept: %v != application/geo+json",
+				r.Header.Get("Accept"))
+			return
+		}
 		fmt.Fprint(w, "OK")
 	}))
 	defer ts.Close()
