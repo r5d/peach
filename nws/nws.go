@@ -53,7 +53,8 @@ type ForecastPeriod struct {
 }
 
 type ForecastProperties struct {
-	Periods []ForecastPeriod
+	GeneratedAt string
+	Periods     []ForecastPeriod
 }
 
 type Forecast struct {
@@ -261,6 +262,20 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 	}
 	if len(forecast.Properties.Periods) == 0 {
 		return nil, fmt.Errorf("forecast hourly: periods empty")
+	}
+
+	// Check for staleness.
+	genAt, tErr := time.Parse(time.RFC3339, forecast.Properties.GeneratedAt)
+	if tErr != nil {
+		return nil, fmt.Errorf("forecast hourly: unable to check staleness")
+	}
+	if time.Since(genAt).Seconds() > 86400 {
+		fhCache.Set(point.Properties.ForecastHourly,
+			[]byte{}, time.Now()) // Invalidate cache.
+		return nil, fmt.Errorf(
+			"forecast hourly: stale data from weather.gov from %v",
+			forecast.Properties.GeneratedAt,
+		)
 	}
 	return forecast, nil
 }
