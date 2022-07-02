@@ -113,9 +113,9 @@ func TestGetForecastHourly(t *testing.T) {
 	}
 
 	// Get forecast hourly.
-	fc, err := GetForecastHourly(np)
-	if err != nil {
-		t.Errorf("error: %v", err)
+	fc, nwsErr := GetForecastHourly(np)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
 		return
 	}
 

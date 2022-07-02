@@ -129,19 +129,16 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 		return nil, nwsErr
 	}
 
-	fh, err := GetForecastHourly(p)
-	if err != nil {
-		return nil, &Error{
-			Title:  "unable get hourly forecast",
-			Type:   "forecast-hourly-failed",
-			Status: 500,
-			Detail: err.Error(),
-		}
+	fh, nwsErr := GetForecastHourly(p)
+	if nwsErr != nil {
+		return nil, nwsErr
 	}
+
 	a, nwsErr := GetAlerts(lat, lng)
 	if nwsErr != nil {
 		return nil, nwsErr
 	}
+
 	return &ForecastBundle{
 		Point:          p,
 		Forecast:       f,
@@ -253,25 +250,33 @@ func GetForecast(point *Point) (*Forecast, *Error) {
 }
 
 // NWS forecast hourly endpoint.
-//
-// TODO: return Error instead of error
-func GetForecastHourly(point *Point) (*Forecast, error) {
+func GetForecastHourly(point *Point) (*Forecast, *Error) {
 	var nwsErr *Error
 	var expires time.Time
 	body := []byte{}
 
 	if point == nil {
-		return nil, fmt.Errorf("forecast hourly: point nil")
+		return nil, &Error{
+			Title:  "point is nil",
+			Type:   "forecast-hourly--points-invalid",
+			Status: 500,
+			Detail: "point is nil",
+		}
 	}
 	if len(point.Properties.ForecastHourly) == 0 {
-		return nil, fmt.Errorf("forecast hourly: link empty")
+		return nil, &Error{
+			Title:  "forecast hourly link is empty",
+			Type:   "forecast-hourly-link-invalid",
+			Status: 500,
+			Detail: "forecast hourly link is empty",
+		}
 	}
 
 	if body = fhCache.Get(point.Properties.ForecastHourly); len(body) == 0 {
 		// Get the hourly forecast.
 		body, expires, nwsErr = get(point.Properties.ForecastHourly)
 		if nwsErr != nil {
-			return nil, fmt.Errorf("forecast hourly: %v", nwsErr)
+			return nil, nwsErr
 		}
 		// Cache it.
 		fhCache.Set(point.Properties.ForecastHourly, body, expires)
@@ -281,24 +286,42 @@ func GetForecastHourly(point *Point) (*Forecast, error) {
 	forecast := new(Forecast)
 	err := json.Unmarshal(body, forecast)
 	if err != nil {
-		return nil, fmt.Errorf("forecast hourly: decode: %v", err)
+		return nil, &Error{
+			Title:  "forecast hourly json unmarshal failed",
+			Type:   "forecast-hourly-json-error",
+			Status: 500,
+			Detail: "forecast hourly json unmarshal failed",
+		}
 	}
 	if len(forecast.Properties.Periods) == 0 {
-		return nil, fmt.Errorf("forecast hourly: periods empty")
+		return nil, &Error{
+			Title:  "forecast hourly has no periods",
+			Type:   "forecast-hourly-periods-empty",
+			Status: 500,
+			Detail: "forecast hourly has no periods",
+		}
 	}
 
 	// Check for staleness.
 	genAt, tErr := time.Parse(time.RFC3339, forecast.Properties.GeneratedAt)
 	if tErr != nil {
-		return nil, fmt.Errorf("forecast hourly: unable to check staleness")
+		return nil, &Error{
+			Title:  "forecast hourly time parsing error",
+			Type:   "forecast-hourly-time-parse-error",
+			Status: 500,
+			Detail: "forecast hourly generated time parsing failed",
+		}
 	}
 	if time.Since(genAt).Seconds() > 86400 {
 		fhCache.Set(point.Properties.ForecastHourly,
 			[]byte{}, time.Now()) // Invalidate cache.
-		return nil, fmt.Errorf(
-			"forecast hourly: stale data from weather.gov from %v",
-			forecast.Properties.GeneratedAt,
-		)
+		return nil, &Error{
+			Title:  "forecast hourly is stale",
+			Type:   "forecast-hourly-stale-data",
+			Status: 500,
+			Detail: fmt.Sprintf("stale data from weather.gov from %v",
+				forecast.Properties.GeneratedAt),
+		}
 	}
 	return forecast, nil
 }
