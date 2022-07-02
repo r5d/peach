@@ -52,9 +52,9 @@ func TestPoints(t *testing.T) {
 
 func TestGetForecast(t *testing.T) {
 	// Get point.
-	np, err := Points(41.115, -83.177)
-	if err != nil {
-		t.Errorf("error: %v", err)
+	np, nwsErr := Points(41.115, -83.177)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
 		return
 	}
 
@@ -106,9 +106,9 @@ func TestGetForecast(t *testing.T) {
 
 func TestGetForecastHourly(t *testing.T) {
 	// Get point.
-	np, err := Points(41.115, -83.177)
-	if err != nil {
-		t.Errorf("error: %v", err)
+	np, nwsErr := Points(41.115, -83.177)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
 		return
 	}
 

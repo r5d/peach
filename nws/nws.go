@@ -119,14 +119,9 @@ func (e Error) Error() string {
 
 // Gets NWS's forecast and hourly forecast.
 func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
-	p, err := Points(lat, lng)
-	if err != nil {
-		return nil, &Error{
-			Title:  "unable get points",
-			Type:   "points-failed",
-			Status: 500,
-			Detail: err.Error(),
-		}
+	p, nwsErr := Points(lat, lng)
+	if nwsErr != nil {
+		return nil, nwsErr
 	}
 	f, err := GetForecast(p)
 	if err != nil {
@@ -160,8 +155,7 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 
 // NWS `/points` endpoint.
 //
-// TODO: return Error instead of error
-func Points(lat, lng float32) (*Point, error) {
+func Points(lat, lng float32) (*Point, *Error) {
 	var nwsErr *Error
 	var expires time.Time
 	var body []byte
@@ -171,7 +165,7 @@ func Points(lat, lng float32) (*Point, error) {
 		url := fmt.Sprintf("https://api.weather.gov/points/%s", ll)
 		body, expires, nwsErr = get(url)
 		if nwsErr != nil {
-			return nil, fmt.Errorf("points: %v", nwsErr)
+			return nil, nwsErr
 		}
 		// Cache it.
 		pCache.Set(ll, body, expires)
@@ -181,13 +175,28 @@ func Points(lat, lng float32) (*Point, error) {
 	point := new(Point)
 	err := json.Unmarshal(body, point)
 	if err != nil {
-		return nil, fmt.Errorf("points: decode: %v", err)
+		return nil, &Error{
+			Title:  "unable json unmarshal",
+			Type:   "points-json-error",
+			Status: 500,
+			Detail: err.Error(),
+		}
 	}
 	if point.Properties.Forecast == "" {
-		return nil, fmt.Errorf("points: forecast empty")
+		return nil, &Error{
+			Title:  "forecast empty",
+			Type:   "points-forecast-error",
+			Status: 500,
+			Detail: "forecast is empty",
+		}
 	}
 	if point.Properties.ForecastHourly == "" {
-		return nil, fmt.Errorf("points: forecasthourly empty")
+		return nil, &Error{
+			Title:  "forecast hourly empty",
+			Type:   "points-forecast-error",
+			Status: 500,
+			Detail: "forecast  hourly is empty",
+		}
 	}
 	return point, nil
 }
