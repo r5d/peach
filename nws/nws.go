@@ -123,15 +123,12 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 	if nwsErr != nil {
 		return nil, nwsErr
 	}
-	f, err := GetForecast(p)
-	if err != nil {
-		return nil, &Error{
-			Title:  "unable get forecast",
-			Type:   "forecast-failed",
-			Status: 500,
-			Detail: err.Error(),
-		}
+
+	f, nwsErr := GetForecast(p)
+	if nwsErr != nil {
+		return nil, nwsErr
 	}
+
 	fh, err := GetForecastHourly(p)
 	if err != nil {
 		return nil, &Error{
@@ -154,7 +151,6 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 }
 
 // NWS `/points` endpoint.
-//
 func Points(lat, lng float32) (*Point, *Error) {
 	var nwsErr *Error
 	var expires time.Time
@@ -202,25 +198,33 @@ func Points(lat, lng float32) (*Point, *Error) {
 }
 
 // NWS forecast endpoint.
-//
-// TODO: return Error instead of error.
-func GetForecast(point *Point) (*Forecast, error) {
+func GetForecast(point *Point) (*Forecast, *Error) {
 	var nwsErr *Error
 	var expires time.Time
 	var body []byte
 
 	if point == nil {
-		return nil, fmt.Errorf("forecast: point nil")
+		return nil, &Error{
+			Title:  "point is nil",
+			Type:   "forecast-points-invalid",
+			Status: 500,
+			Detail: "point is nil",
+		}
 	}
 	if len(point.Properties.Forecast) == 0 {
-		return nil, fmt.Errorf("forecast: link empty")
+		return nil, &Error{
+			Title:  "forecast link is empty",
+			Type:   "forecast-link-invalid",
+			Status: 500,
+			Detail: "forecast link is empty",
+		}
 	}
 
 	if body = fCache.Get(point.Properties.Forecast); len(body) == 0 {
 		// Get the forecast
 		body, expires, nwsErr = get(point.Properties.Forecast)
 		if nwsErr != nil {
-			return nil, fmt.Errorf("forecast: %v", nwsErr)
+			return nil, nwsErr
 		}
 		// Cache it.
 		fCache.Set(point.Properties.Forecast, body, expires)
@@ -230,10 +234,20 @@ func GetForecast(point *Point) (*Forecast, error) {
 	forecast := new(Forecast)
 	err := json.Unmarshal(body, forecast)
 	if err != nil {
-		return nil, fmt.Errorf("forecast: decode: %v", err)
+		return nil, &Error{
+			Title:  "forecast json unmarshal failed",
+			Type:   "forecast-json-error",
+			Status: 500,
+			Detail: "forecast json unmarshal failed",
+		}
 	}
 	if len(forecast.Properties.Periods) == 0 {
-		return nil, fmt.Errorf("forecast: periods empty")
+		return nil, &Error{
+			Title:  "forecast has no periods",
+			Type:   "forecast-periods-empty",
+			Status: 500,
+			Detail: "forecast has no periods",
+		}
 	}
 	return forecast, nil
 }

@@ -59,9 +59,9 @@ func TestGetForecast(t *testing.T) {
 	}
 
 	// Get forecast.
-	fc, err := GetForecast(np)
-	if err != nil {
-		t.Errorf("error: %v", err)
+	fc, nwsErr := GetForecast(np)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
 		return
 	}
 
