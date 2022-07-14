@@ -151,6 +151,41 @@ func TestGetForecastHourly(t *testing.T) {
 	}
 }
 
+func TestGetForecastGridData(t *testing.T) {
+	// Get point.
+	np, nwsErr := Points(41.115, -83.177)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
+		return
+	}
+
+	// Get forecast grid data
+	grid, nwsErr := GetForecastGridData(np)
+	if nwsErr != nil {
+		t.Errorf("error: %v", nwsErr)
+		return
+	}
+
+	if len(grid.Properties.RelativeHumidity.Values) < 1 {
+		t.Error("error: humidity values empty")
+		return
+	}
+
+	// Verify humidity values.
+	for i, value := range grid.Properties.RelativeHumidity.Values {
+		if len(value.ValidTime) < 1 {
+			t.Errorf("humidity: %d: valid time invalid: %v", i,
+				value.ValidTime)
+			return
+		}
+		if value.Value < 1 {
+			t.Errorf("humidity: %d: value invalid: %v", i,
+				value.Value)
+			return
+		}
+	}
+}
+
 func TestNWSGetWrapper(t *testing.T) {
 	// Initialize test NWS server.
 	fails := 0

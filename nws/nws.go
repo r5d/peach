@@ -30,6 +30,7 @@ type PointProperties struct {
 	GridY            int
 	Forecast         string
 	ForecastHourly   string
+	ForecastGridData string
 	RelativeLocation PointLocation
 }
 
@@ -77,6 +78,24 @@ type FeatureCollection struct {
 	Features []Feature
 }
 
+type ForecastGrid struct {
+	Properties GridProperties
+}
+
+type GridProperties struct {
+	RelativeHumidity GridHumidity
+}
+
+type GridHumidity struct {
+	Uom    string
+	Values []GridHumidityValue
+}
+
+type GridHumidityValue struct {
+	ValidTime string
+	Value     int
+}
+
 type Error struct {
 	Title  string
 	Type   string
@@ -95,6 +114,7 @@ type ForecastBundle struct {
 var pCache *cache.Cache
 var fCache *cache.Cache
 var fhCache *cache.Cache
+var fgCache *cache.Cache
 var aCache *cache.Cache
 var baseUrl *url.URL
 
@@ -104,6 +124,7 @@ func init() {
 	pCache = cache.NewCache()
 	fCache = cache.NewCache()
 	fhCache = cache.NewCache()
+	fgCache = cache.NewCache()
 	aCache = cache.NewCache()
 
 	// Parse NWS base url.
@@ -324,6 +345,53 @@ func GetForecastHourly(point *Point) (*Forecast, *Error) {
 		}
 	}
 	return forecast, nil
+}
+
+// NWS forecast grid data endpoint.
+func GetForecastGridData(point *Point) (*ForecastGrid, *Error) {
+	var nwsErr *Error
+	var expires time.Time
+	var body []byte
+
+	if point == nil {
+		return nil, &Error{
+			Title:  "point is nil",
+			Type:   "griddata-points-invalid",
+			Status: 500,
+			Detail: "point is nil",
+		}
+	}
+	if len(point.Properties.ForecastGridData) == 0 {
+		return nil, &Error{
+			Title:  "forecast grid data link is empty",
+			Type:   "forecast-griddata-link-invalid",
+			Status: 500,
+			Detail: "forecast grid data link is empty",
+		}
+	}
+
+	if body = fgCache.Get(point.Properties.ForecastGridData); len(body) == 0 {
+		// Get the forecast grid data
+		body, expires, nwsErr = get(point.Properties.ForecastGridData)
+		if nwsErr != nil {
+			return nil, nwsErr
+		}
+		// Cache it.
+		fgCache.Set(point.Properties.ForecastGridData, body, expires)
+	}
+
+	// Unmarshal.
+	grid := new(ForecastGrid)
+	err := json.Unmarshal(body, grid)
+	if err != nil {
+		return nil, &Error{
+			Title:  "forecast grid data json unmarshal failed",
+			Type:   "forecast-griddata-json-error",
+			Status: 500,
+			Detail: "forecast grid data json unmarshal failed",
+		}
+	}
+	return grid, nil
 }
 
 // NWS active alerts endpoint.
