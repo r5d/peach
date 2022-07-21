@@ -6,7 +6,7 @@ package time
 import "testing"
 
 func TestDurationToSeconds(t *testing.T) {
-	secs, err := durationToSeconds("PT3H4M60S")
+	secs, err := Duration("PT3H4M60S")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return
@@ -16,7 +16,7 @@ func TestDurationToSeconds(t *testing.T) {
 		return
 	}
 
-	secs, err = durationToSeconds("PT4M60S")
+	secs, err = Duration("PT4M60S")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return
@@ -26,7 +26,7 @@ func TestDurationToSeconds(t *testing.T) {
 		return
 	}
 
-	secs, err = durationToSeconds("PT12H")
+	secs, err = Duration("PT12H")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return
@@ -36,7 +36,7 @@ func TestDurationToSeconds(t *testing.T) {
 		return
 	}
 
-	secs, err = durationToSeconds("PT1H")
+	secs, err = Duration("PT1H")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return
@@ -46,7 +46,7 @@ func TestDurationToSeconds(t *testing.T) {
 		return
 	}
 
-	secs, err = durationToSeconds("PT2H")
+	secs, err = Duration("PT2H")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return
@@ -56,7 +56,7 @@ func TestDurationToSeconds(t *testing.T) {
 		return
 	}
 
-	secs, err = durationToSeconds("PT45M")
+	secs, err = Duration("PT45M")
 	if err != nil {
 		t.Errorf("failed: %v", err)
 		return

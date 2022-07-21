@@ -18,7 +18,7 @@ var durationRegex = regexp.MustCompile(`PT(([0-9]{0,2})?H)?(([0-9]{0,2})?M)?(([0
 // Recognizes durations in this format: PT3H4M60S
 //
 // [1]: https://en.wikipedia.org/wiki/ISO_8601#Durations
-func durationToSeconds(duration string) (int, error) {
+func Duration(duration string) (int, error) {
 	m := durationRegex.FindStringSubmatch(duration)
 	if m == nil || len(m) == 0 {
 		return 0, fmt.Errorf("duration invalid: %v", duration)
