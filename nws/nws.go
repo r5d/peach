@@ -108,6 +108,7 @@ type ForecastBundle struct {
 	Point          *Point
 	Forecast       *Forecast
 	ForecastHourly *Forecast
+	ForecastGrid   *ForecastGrid
 	Alerts         *FeatureCollection
 }
 
@@ -160,10 +161,16 @@ func GetForecastBundle(lat, lng float32) (*ForecastBundle, *Error) {
 		return nil, nwsErr
 	}
 
+	g, nwsErr := GetForecastGridData(p)
+	if nwsErr != nil {
+		return nil, nwsErr
+	}
+
 	return &ForecastBundle{
 		Point:          p,
 		Forecast:       f,
 		ForecastHourly: fh,
+		ForecastGrid:   g,
 		Alerts:         a,
 	}, nil
 }
