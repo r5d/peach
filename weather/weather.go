@@ -10,6 +10,7 @@ import (
 
 	"ricketyspace.net/peach/nws"
 	"ricketyspace.net/peach/photon"
+	t "ricketyspace.net/peach/time"
 	"ricketyspace.net/peach/version"
 )
 
@@ -137,4 +138,20 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 		}
 	}
 	return w, nil, 200
+}
+
+func humidity(g *nws.ForecastGrid) (int, error) {
+	if g == nil {
+		return 0, fmt.Errorf("humdity: forecast grid data empty")
+	}
+	for _, v := range g.Properties.RelativeHumidity.Values {
+		yes, err := t.IsCurrent(v.ValidTime)
+		if err != nil {
+			return 0, fmt.Errorf("humidity: %v", err)
+		}
+		if yes {
+			return v.Value, nil
+		}
+	}
+	return 0, fmt.Errorf("humidity: not found")
 }
