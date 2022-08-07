@@ -31,6 +31,7 @@ type WeatherNow struct {
 	Forecast        string
 	WindSpeed       string
 	WindDirection   string
+	Humidity        int
 }
 
 type WeatherPeriod struct {
@@ -58,6 +59,12 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 		return nil, nwsErr, nwsErr.Status
 	}
 
+	// Get humidity from the grid data.
+	h, err := humidity(fBundle.ForecastGrid)
+	if err != nil {
+		return nil, err, 500
+	}
+
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
 		strings.ToLower(fBundle.Point.Properties.RelativeLocation.Properties.City),
@@ -71,6 +78,7 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 		Forecast:        fBundle.ForecastHourly.Properties.Periods[0].ShortForecast,
 		WindSpeed:       fBundle.ForecastHourly.Properties.Periods[0].WindSpeed,
 		WindDirection:   fBundle.ForecastHourly.Properties.Periods[0].WindDirection,
+		Humidity:        h,
 	}
 
 	// Build Q2H timeline for the 12 hours.
