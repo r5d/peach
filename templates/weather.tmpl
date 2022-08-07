@@ -26,14 +26,27 @@
 								</div>
 							</div> <!-- temperature-forecast-container -->
 
-							<div class="wind-container">
-								<div class="prop">
-									Wind
-								</div>
-								<div class="value">
-									{{.Now.WindSpeed}} {{.Now.WindDirection}}
-								</div>
-							</div> <!-- wind-container end -->
+							<div class="misc-container">
+								<div class="wind-container">
+									<div class="prop">
+										Wind
+									</div>
+									<div class="value">
+										{{.Now.WindSpeed}} {{.Now.WindDirection}}
+									</div>
+								</div> <!-- wind-container end -->
+
+								<div class="humidity-container">
+									<div class="prop">
+										Humidity
+									</div>
+									<div class="value">
+										{{.Now.Humidity}}&#37;
+									</div>
+								</div> <!-- humidity-container end -->
+
+							</div> <!-- misc-container end -->
+
 						</div> <!-- now-container end -->
 
 					</div> <!-- period-container end -->
