@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -46,4 +47,39 @@ func Duration(duration string) (time.Duration, error) {
 
 	return d, nil
 }
+
+// Checks if the given ISO 8601 time is within the current time
+// period.
+//
+// `t` must be in 2022-08-07T02:00:00+00:00/PT1H format
+//
+// Returns true if the time `t` is the current time period; false
+// otherwise.
+func IsCurrent(t string) (bool, error) {
+	parts := strings.Split(t, "/")
+	if len(parts) != 2 {
+		return false, fmt.Errorf("time invalid")
+	}
+
+	// Parse time `t` into time intervals t1 and t2.
+	t1, err := time.Parse(time.RFC3339, parts[0])
+	if err != nil {
+		return false, fmt.Errorf("time invalid: %s", err)
+	}
+	d, err := Duration(parts[1])
+	if err != nil {
+		return false, fmt.Errorf("time invalid: %s", err)
+	}
+	t2 := t1.Add(d)
+
+	// Time `t` is in the current time period if current time is
+	// within the interval t1 and t2.
+	now := time.Now()
+	if t1.Before(now) && now.Before(t2) {
+		return true, nil
+	}
+	if t1.Equal(now) || t2.Equal(now) {
+		return true, nil
+	}
+	return false, nil
 }
