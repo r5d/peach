@@ -36,6 +36,7 @@
 									</div>
 								</div> <!-- wind-container end -->
 
+								{{ if gt .Now.Humidity 0 }}
 								<div class="humidity-container">
 									<div class="prop">
 										Humidity
@@ -44,6 +45,7 @@
 										{{.Now.Humidity}}&#37;
 									</div>
 								</div> <!-- humidity-container end -->
+								{{ end }}
 
 							</div> <!-- misc-container end -->
 
