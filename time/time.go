@@ -12,12 +12,12 @@ import (
 	"time"
 )
 
-// ISO 8601 Duration regex for matching duration in PT3H4M60S format.
-var durationRegex = regexp.MustCompile(`PT(([0-9]{0,2})?H)?(([0-9]{0,2})?M)?(([0-9]{0,2}?)S)?`)
+// ISO 8601 Duration regex for matching duration in P18DT3H4M60S format.
+var durationRegex = regexp.MustCompile(`P(([0-9]{1,})?D)?T(([0-9]{1,2})?H)?(([0-9]{1,2})?M)?(([0-9]{1,2}?)S)?`)
 
 // Converts ISO 8601 duration[1] to time.Duration
 //
-// Recognizes durations in this format: PT3H4M60S
+// Recognizes durations in this format: P18DT3H4M60S
 //
 // [1]: https://en.wikipedia.org/wiki/ISO_8601#Durations
 func Duration(duration string) (time.Duration, error) {
@@ -25,20 +25,25 @@ func Duration(duration string) (time.Duration, error) {
 	if m == nil || len(m) == 0 {
 		return 0, fmt.Errorf("duration invalid: %v", duration)
 	}
-	hours, err := strconv.Atoi(m[2])
+	days, err := strconv.Atoi(m[2])
+	if err != nil {
+		days = 0
+	}
+	hours, err := strconv.Atoi(m[4])
 	if err != nil {
 		hours = 0
 	}
-	mins, err := strconv.Atoi(m[4])
+	mins, err := strconv.Atoi(m[6])
 	if err != nil {
 		mins = 0
 	}
-	secs, err := strconv.Atoi(m[6])
+	secs, err := strconv.Atoi(m[8])
 	if err != nil {
 		secs = 0
 	}
 
 	// Add 'em all together.
+	secs += days * 86400
 	secs += hours * 3600
 	secs += mins * 60
 

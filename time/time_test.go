@@ -69,6 +69,26 @@ func TestDurationToSeconds(t *testing.T) {
 		t.Errorf("duration in seconds incorrect: %v", d)
 		return
 	}
+
+	d, err = Duration("P3DT45M")
+	if err != nil {
+		t.Errorf("failed: %v", err)
+		return
+	}
+	if d.Seconds() != 261900 {
+		t.Errorf("duration in seconds incorrect: %v", d)
+		return
+	}
+
+	d, err = Duration("P7DT18H")
+	if err != nil {
+		t.Errorf("failed: %v", err)
+		return
+	}
+	if d.Seconds() != 669600 {
+		t.Errorf("duration in seconds incorrect: %v", d)
+		return
+	}
 }
 
 func TestIsCurrent(t *testing.T) {
