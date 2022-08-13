@@ -60,11 +60,7 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 	}
 
 	// Get humidity from the grid data.
-	h, err := humidity(fBundle.ForecastGrid)
-	if err != nil {
-		return nil, err, 500
-	}
-
+	h := humidity(fBundle.ForecastGrid)
 	w := new(Weather)
 	w.Location = fmt.Sprintf("%s, %s",
 		strings.ToLower(fBundle.Point.Properties.RelativeLocation.Properties.City),
@@ -148,18 +144,21 @@ func NewWeather(lat, lng float32) (*Weather, error, int) {
 	return w, nil, 200
 }
 
-func humidity(g *nws.ForecastGrid) (int, error) {
+func humidity(g *nws.ForecastGrid) int {
 	if g == nil {
-		return 0, fmt.Errorf("humdity: forecast grid data empty")
+		return 0
 	}
 	for _, v := range g.Properties.RelativeHumidity.Values {
+		if v.Value < 1 {
+			continue
+		}
 		yes, err := t.IsCurrent(v.ValidTime)
 		if err != nil {
-			return 0, fmt.Errorf("humidity: %v", err)
+			return 0
 		}
 		if yes {
-			return v.Value, nil
+			return v.Value
 		}
 	}
-	return 0, fmt.Errorf("humidity: not found")
+	return 0
 }
