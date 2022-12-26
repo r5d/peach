@@ -6,7 +6,7 @@ PKGS=${MOD}/cache ${MOD}/client ${MOD}/nws ${MOD}/photon ${MOD}/time
 CSS=static/peach.min.css
 
 peach: vet fix fmt ${CSS}
-	go build ${BUILD_OPTS}
+	go build -race ${BUILD_OPTS}
 
 fmt:
 	go fmt ${MOD} ${PKGS}
@@ -21,7 +21,7 @@ vet:
 .PHONY: vet
 
 test:
-	go test ${PKGS} ${ARGS}
+	go test -race ${PKGS} ${ARGS}
 .PHONY: test
 
 ${CSS}: static/peach.css
