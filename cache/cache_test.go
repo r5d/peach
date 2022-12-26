@@ -5,6 +5,7 @@ package cache
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
 	"time"
 )
@@ -69,5 +70,47 @@ func TestCacheGet(t *testing.T) {
 	if bytes.Compare(c.Get("sna"), []byte{}) != 0 {
 		t.Errorf("cache.Get(sna) is not empty: %s", c.Get("sna"))
 		return
+	}
+}
+
+func TestConcurrentSets(t *testing.T) {
+	// Expiration time for all keys.
+	exp := time.Now().Add(time.Second * 120)
+
+	// Generate some keys.
+	keys := make([]string, 0)
+	maxKeys := 1000
+	for i := 0; i < maxKeys; i++ {
+		keys = append(keys, fmt.Sprintf("key-%d", i))
+	}
+
+	// Go routing for adding keys to cache.
+	addToCache := func(c *Cache, keys []string, donec chan int) {
+		for i := 0; i < len(keys); i++ {
+			c.Set(keys[i], []byte(fmt.Sprintf("val-%d", i)), exp)
+		}
+		donec <- 1
+	}
+
+	// Init. cache.
+	c := NewCache()
+	if c == nil {
+		t.Errorf("cache is nil")
+		return
+	}
+	donec := make(chan int)
+
+	// Add keys to cache concurrently.
+	go addToCache(c, keys, donec)
+	go addToCache(c, keys, donec)
+	go addToCache(c, keys, donec)
+	completed := 0
+	for completed < 3 {
+		<-donec
+		completed += 1
+	}
+
+	if len(c.store) != maxKeys {
+		t.Errorf("number of keys in store != %d: %v", maxKeys, c.store)
 	}
 }

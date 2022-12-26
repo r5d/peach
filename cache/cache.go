@@ -14,12 +14,14 @@ type item struct {
 
 // A key-value cache store.
 type Cache struct {
+	sema  chan int // Semaphore for read/write access to cache.
 	store map[string]item
 }
 
 // Returns a new empty cache store.
 func NewCache() *Cache {
 	c := new(Cache)
+	c.sema = make(chan int, 1)
 	c.store = make(map[string]item)
 	return c
 }
@@ -30,6 +32,12 @@ func NewCache() *Cache {
 // Cache.Get will return an empty string once `expires` is past the
 // current time.
 func (c *Cache) Set(key string, value []byte, expires time.Time) {
+	// Get sema token before accessing the cache.
+	c.sema <- 1
+	defer func() {
+		// Give up sema token.
+		<-c.sema
+	}()
 	c.store[key] = item{
 		value:   value,
 		expires: expires,
@@ -41,6 +49,13 @@ func (c *Cache) Set(key string, value []byte, expires time.Time) {
 // An empty []byte will be returned when if the key does not exist or
 // if the item corresponding to the key has expired.
 func (c *Cache) Get(key string) []byte {
+	// Get sema token before accessing the cache.
+	c.sema <- 1
+	defer func() {
+		// Give up sema token.
+		<-c.sema
+	}()
+
 	if _, ok := c.store[key]; !ok {
 		return []byte{}
 	}
