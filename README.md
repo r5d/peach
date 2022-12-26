@@ -9,7 +9,7 @@ Barebones [weather service][peach].
 Build requirements:
 
  - make
- - go version 18 or higher
+ - go version 19 or higher
 
 To build the peach binary, just do:
 
